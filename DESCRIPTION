@@ -16,4 +16,5 @@ Imports:
     ggplot2,
     assertthat,
     zoo,
-    leaflet
+    leaflet,
+    magrittr
