@@ -123,7 +123,7 @@ price_boxplot <- function(df, variable = c('PriceSold','PPSF','PPBR','PPUnit'), 
 
 #' Title
 #'
-#' @param df
+#' @param df data frame
 #' @param ylimits limits of y axis
 #'
 #' @return returns a scatter plot of reported sale price per unit vs reported sale data,
@@ -146,7 +146,7 @@ sales_time_scatter <- function(df, ylimits = c(0, 350000)){
 
 #' Title
 #'
-#' @param df
+#' @param df data frame
 #' @param ylimits limits of y axis
 #'
 #' @return returns a scatter plot of reported sale price per unit vs reported average unit size,
