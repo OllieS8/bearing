@@ -1,5 +1,19 @@
 
 
+#' Define attributes of subject property
+#'
+#' @param subject_lat The subject properties latitude
+#' @param subject_lng The subject properties longitude
+#'
+#' @return assigns the attributes to the global environment
+#' @export
+#'
+#' @examples
+define_subject <- function(subject_lat, subject_lng){
+  assign('subject_lat', subject_lat, envir = .GlobalEnv)
+  assign('subject_lng', subject_lng, envir = .GlobalEnv)
+}
+
 # De-mean lat and lon coords such that their rescaled values will be relative
 # to one another (distance from a shared center point)
 demean_coords <- function(x, y) {
@@ -24,13 +38,13 @@ rescale <- function(x, to = c(0, 1), from = range(x, na.rm = T, finite = T)) {
 #' @export
 #'
 #' @examples
-reproject_latlon <- function(df){
+reproject_latlon <- function(df, old_crs = 4326, new_crs = 3502){
   df %>%
-    st_as_sf(coords = c("Longitude", "Latitude"), crs = 4326) %>%
+    sf::st_as_sf(coords = c("Longitude", "Latitude"), crs = old_crs) %>%
     # https://spatialreference.org/ref/epsg/3502/
-    st_transform(3502) %>%
-    mutate(lon = abs(st_coordinates(.)[, 1]), lat = abs(st_coordinates(.)[, 2])) %>%
-    st_set_geometry(NULL)
+    sf::st_transform(new_crs) %>%
+    dplyr::mutate(lon = st_coordinates(.)[, 1], lat = st_coordinates(.)[, 2]) %>%
+    sf::st_set_geometry(NULL)
 }
 
 
