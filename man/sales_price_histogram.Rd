@@ -7,7 +7,7 @@
 sales_price_histogram(
   df,
   variable = c("PriceSold", "PPSF", "PPBR", "PPUnit"),
-  bin_width = 1e+05,
+  bin_width = 100000,
   xlimits = c(0, 7500000)
 )
 }

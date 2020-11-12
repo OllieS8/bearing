@@ -4,7 +4,7 @@
 \alias{reproject_latlon}
 \title{Reproject lat/lon into planar coordinates}
 \usage{
-reproject_latlon(df)
+reproject_latlon(df, old_crs = 4326, new_crs = 3502)
 }
 \arguments{
 \item{df}{data frame containing Latitude and Longitude}

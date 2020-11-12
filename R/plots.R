@@ -27,13 +27,15 @@ leaflet_plot <- function(df){
     message('Error: Must run function define_subject before leaflet plot')
   })
 
+  options(scipen=999)
+
   leaflet::leaflet(data = df) %>%
     leaflet::addTiles() %>%
     leaflet::addCircleMarkers(layerId = "subj", lng = subject_lng, lat = subject_lat, popup = "Subject Property", radius = 10, color = "red",
                      weight = 5, opacity = 1, fill = TRUE, fillColor = "red",
                      fillOpacity = 1, dashArray = NULL,  popupOptions = NULL, label = NULL, labelOptions = NULL, options = leaflet::pathOptions(), clusterOptions = NULL, clusterId = NULL) %>%
-    leaflet::addMarkers(lng = ~Longitude, lat = ~Latitude, popup = paste("Address", Address, "<br>",
-                                                                        "Sale Price:", PriceSold, "<br>"))
+    leaflet::addMarkers(lng = ~Longitude, lat = ~Latitude, popup = paste("Address", df$Address, "<br>",
+                                                                        "Sale Price: $", df$PriceSold, "<br>"))
 }
 
 
