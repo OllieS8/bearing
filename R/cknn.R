@@ -266,3 +266,25 @@ cknn <- function(data, lon, lat, m = 5, k = 10, l = 0.5,
 
   return(out)
 }
+
+
+
+
+#' recombines knn output with original data
+#'
+#' @param initial_data original data frame
+#' @param knn_object knn object from cknn function
+#'
+#' @return returns original data frame with knn information
+#' @export
+#'
+#' @examples
+recombine_data_knn <- function(initial_data, knn_object){
+  initial_data %>%
+    dplyr::mutate(
+      m = knn_object$kproto$cluster,
+      knn = knn_object$knn,
+    ) %>%
+    dplyr::rename(Latitude = lat,
+           Longitude = lon)
+}

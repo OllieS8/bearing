@@ -51,7 +51,7 @@ leaflet_plot <- function(df){
 #'
 #' @examples Modified from g2- Case Study.Rmd:
 #' sales_price_histogram(Apartments3, variable = 'PriceSold', bin_width = 100000, xlimits = c(0,7500000))
-sales_price_histogram <- function(df, variable = c("PriceSold","PPSF","PPBR","PPUnit"), bin_width = 100000, xlimits = c(0,7500000)){
+sales_price_histogram <- function(df, variable = c("PriceSold","PPSF","PPBR","PPUnit", "All")){
 
   variable <- match.arg(variable)
 
@@ -82,8 +82,7 @@ sales_price_histogram <- function(df, variable = c("PriceSold","PPSF","PPBR","PP
   options(scipen=999)
 
   ggplot2::ggplot(data = df, ggplot2::aes_string(variable)) +
-    ggplot2::geom_histogram(colour="black", fill="blue", binwidth = bin_width) +
-    ggplot2::xlim(xlimits) +
+    ggplot2::geom_histogram(colour="black", fill="blue") +
     ggplot2::labs(title = title_lab, x = x_lab, y = "Count", caption = "Valuemetrics.info SGDS2")
 }
 
@@ -219,4 +218,56 @@ sales_by_month <- function(df){
     ggplot2::geom_smooth(method = lm, se = FALSE) +
     ggplot2::labs(title = "Average and Median Sales Price by Month", x = "Date", y = "Sales Price")
 
+}
+
+
+#' Plot subject property with other properties from same cluster
+#'
+#' @param df data frame from recombine_data_knn function
+#'
+#' @return returns leaflet plot, with subject property and other properties from same cluster
+#' @export
+#'
+#' @examples
+plot_clusters <- function(df){
+  tryCatch({
+    subject_apn <- get('subject_apn')
+  },
+  error=function(cond){
+    message('Error: Must run function define_subject before leaflet plot')
+  })
+
+  subj_cluster <- (df %>%
+                     dplyr::filter(APN == subject_apn) %>%
+                     dplyr::select(m))[[1]]
+
+  bearing::leaflet_plot(df %>%
+                          dplyr::filter(m == subj_cluster))
+}
+
+
+#' Plots subject property with k nearest neighbours from cluster
+#'
+#' @param df data frame from recombine_data_knn function
+#'
+#' @return returns leaflet plot, with subject property and k nearest neighbours
+#' @export
+#'
+#' @examples
+plot_knn <- function(df){
+  tryCatch({
+    subject_apn <- get('subject_apn')
+  },
+  error=function(cond){
+    message('Error: Must run function define_subject before leaflet plot')
+  })
+
+  nn <- (df %>%
+           dplyr::filter(APN == subject_apn) %>%
+           dplyr::select(knn))[[1]] %>%
+    unlist()
+
+  sales_nn <- rbind(df[nn,], df %>% dplyr::filter(APN == subject_apn))
+
+  bearing::leaflet_plot(sales_nn)
 }

@@ -6,9 +6,7 @@
 \usage{
 sales_price_histogram(
   df,
-  variable = c("PriceSold", "PPSF", "PPBR", "PPUnit"),
-  bin_width = 100000,
-  xlimits = c(0, 7500000)
+  variable = c("PriceSold", "PPSF", "PPBR", "PPUnit", "All")
 )
 }
 \arguments{

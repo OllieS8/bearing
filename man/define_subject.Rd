@@ -4,12 +4,12 @@
 \alias{define_subject}
 \title{Define attributes of subject property}
 \usage{
-define_subject(subject_lat, subject_lng)
+define_subject(df, subject_apn)
 }
 \arguments{
-\item{subject_lat}{The subject properties latitude}
+\item{df}{data frame containing subject property}
 
-\item{subject_lng}{The subject properties longitude}
+\item{subject_apn}{APN of subject property}
 }
 \value{
 assigns the attributes to the global environment

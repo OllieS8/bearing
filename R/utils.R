@@ -2,16 +2,22 @@
 
 #' Define attributes of subject property
 #'
-#' @param subject_lat The subject properties latitude
-#' @param subject_lng The subject properties longitude
+#' @param df data frame containing subject property
+#' @param subject_apn APN of subject property
 #'
 #' @return assigns the attributes to the global environment
 #' @export
 #'
 #' @examples
-define_subject <- function(subject_lat, subject_lng){
-  assign('subject_lat', subject_lat, envir = .GlobalEnv)
-  assign('subject_lng', subject_lng, envir = .GlobalEnv)
+define_subject <- function(df, subject_apn){
+  assertthat::assert_that(assertthat::has_name(df, 'APN'), msg = 'APN column needs to be spelt as follow: APN')
+
+  subj_data <- df %>%
+    dplyr::filter(APN == subject_apn)
+
+  assign('subject_lat', subj_data$Latitude, envir = .GlobalEnv)
+  assign('subject_lng', subj_data$Longitude, envir = .GlobalEnv)
+  assign('subject_apn', subject_apn, envir = .GlobalEnv)
 }
 
 # De-mean lat and lon coords such that their rescaled values will be relative
