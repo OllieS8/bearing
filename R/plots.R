@@ -8,17 +8,32 @@
 #' @export
 #'
 #' @examples Modified from g2- Case Study.Rmd:
-#' leaflet_plot(Apartments2[1:260,], subject_lng = -117.141637, subject_lat = 32.756933)
-leaflet_plot <- function(df, subject_lng, subject_lat){
+#' leaflet_plot(Apartments2)
+leaflet_plot <- function(df){
   assertthat::assert_that(assertthat::has_name(df, 'Latitude'), msg = 'Latitude column needs to be spelt as follow: Latitude')
   assertthat::assert_that(assertthat::has_name(df, 'Longitude'), msg = 'Longitude column needs to be spelt as follow: Longitude')
+
+  tryCatch({
+    subject_lng <- get('subject_lng')
+  },
+  error=function(cond){
+    message('Error: Must run function define_subject before leaflet plot')
+  })
+
+  tryCatch({
+    subject_lat <- get('subject_lat')
+  },
+  error=function(cond){
+    message('Error: Must run function define_subject before leaflet plot')
+  })
 
   leaflet::leaflet(data = df) %>%
     leaflet::addTiles() %>%
     leaflet::addCircleMarkers(layerId = "subj", lng = subject_lng, lat = subject_lat, popup = "Subject Property", radius = 10, color = "red",
                      weight = 5, opacity = 1, fill = TRUE, fillColor = "red",
                      fillOpacity = 1, dashArray = NULL,  popupOptions = NULL, label = NULL, labelOptions = NULL, options = leaflet::pathOptions(), clusterOptions = NULL, clusterId = NULL) %>%
-    leaflet::addMarkers(lng = ~Longitude, lat = ~Latitude, popup = ~Address)
+    leaflet::addMarkers(lng = ~Longitude, lat = ~Latitude, popup = paste("Address", Address, "<br>",
+                                                                        "Sale Price:", PriceSold, "<br>"))
 }
 
 
