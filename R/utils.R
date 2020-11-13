@@ -58,3 +58,13 @@ hist_plot <- function(df, title_lab, x_lab, specific_variable){
     ggplot2::geom_histogram(colour="black", fill="blue") +
     ggplot2::labs(title = title_lab, x = x_lab, y = "Count", caption = "Valuemetrics.info SGDS2")
 }
+
+box_plot <- function(df, title_lab, y_lab, specific_variable){
+  ggplot2::ggplot(data = df) +
+    ggplot2::geom_boxplot(mapping = ggplot2::aes_string(y=specific_variable)) +
+    ggplot2::guides(fill=FALSE) +
+    # ggplot2::ylim(ylimits) +
+    ggplot2::labs(title = title_lab, x = "", y = y_lab, caption = "Valuemetrics.info SGDS2") +
+    ggplot2::coord_flip()
+}
+

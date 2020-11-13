@@ -51,7 +51,6 @@ leaflet_plot <- function(df){
 #' sales_price_histogram(Apartments3, variable = 'PriceSold', bin_width = 100000, xlimits = c(0,7500000))
 sales_price_histogram <- function(df, variable = c("All", "PriceSold","PPSF","PPBR","PPUnit"), columns = 1){
 
-  # variable <- match.arg(variable)
   p <- list()
 
   if('PriceSold' %in% variable | 'All' %in% variable){
@@ -99,50 +98,57 @@ sales_price_histogram <- function(df, variable = c("All", "PriceSold","PPSF","PP
 #' Create a boxplot of different sales metrics
 #'
 #' @param df Data frame
-#' @param variable variable of interest: PriceSold, PPSF, PPBR or PPUnit
+#' @param variable variable of interest: PriceSold, PPSF, PPBR or PPUnit. default = All.
 #' @param ylimits limits of y axis
 #'
 #' @return returns a boxplot
 #' @export
 #'
 #' @examples Modified from g2- Case Study.Rmd:
-#' price_boxplot(Apartments3, variable = 'PPSF', ylimits = c(0,750))
-price_boxplot <- function(df, variable = c('PriceSold','PPSF','PPBR','PPUnit'), ylimits = c(0,7500000)){
+#' price_boxplot(Apartments3, variable = 'PPSF')
+price_boxplot <- function(df, variable = c('All','PriceSold','PPSF','PPBR','PPUnit')){
 
-  variable <- match.arg(variable)
+  p <- list()
 
-  if(variable == 'PriceSold'){
+  if('PriceSold' %in% variable | 'All' %in% variable){
     assertthat::assert_that(assertthat::has_name(df, 'PriceSold'), msg = 'PriceSold column needs to be spelt as follow: PriceSold')
+    specific_variable <- 'PriceSold'
     title_lab <- "Boxplot of Sold Price"
     y_lab <- "Reported Sold Price"
+    p1 <- box_plot(df, title_lab, y_lab, specific_variable)
+    p <- c(p, p1 = list(p1))
   }
 
-  if(variable == 'PPSF'){
+  if('PPSF' %in% variable | 'All' %in% variable){
     assertthat::assert_that(assertthat::has_name(df, 'PPSF'), msg = 'PPSF column needs to be spelt as follow: PPSF')
+    specific_variable <- 'PPSF'
     title_lab <- "Boxplot of Sold Price Per Sq Ft"
     y_lab <- "Reported Sold Price/SqFt"
+    p2 <- box_plot(df, title_lab, y_lab, specific_variable)
+    p <- c(p, p2 = list(p2))
   }
 
-  if(variable == 'PPBR'){
+  if('PPBR' %in% variable | 'All' %in% variable){
     assertthat::assert_that(assertthat::has_name(df, 'PPBR'), msg = 'PPBR column needs to be spelt as follow: PPBR')
+    specific_variable <- 'PPBR'
     title_lab <- "Boxplot of Sold Price/Bedroom"
     y_lab <- "Reported Sold Price/Bedroom"
+    p3 <- box_plot(df, title_lab, y_lab, specific_variable)
+    p <- c(p, p3 = list(p3))
   }
 
-  if(variable == 'PPUnit'){
+  if('PPUnit' %in% variable | 'All' %in% variable){
     assertthat::assert_that(assertthat::has_name(df, 'PPUnit'), msg = 'PPUnit column needs to be spelt as follow: PPUnit')
+    specific_variable <- 'PPUnit'
     title_lab <- "Boxplot of Sold Price/Unit"
     y_lab <- "Reported Sold Price/Unit"
+    p4 <- box_plot(df, title_lab, y_lab, specific_variable)
+    p <- c(p, p4 = list(p4))
   }
 
   options(scipen=999)
 
-  ggplot2::ggplot(data = df) +
-    ggplot2::geom_boxplot(mapping = ggplot2::aes_string(y=variable)) +
-    ggplot2::guides(fill=FALSE) +
-    ggplot2::ylim(ylimits) +
-    ggplot2::labs(title = title_lab, x = "", y = y_lab, caption = "Valuemetrics.info SGDS2") +
-    ggplot2::coord_flip()
+  multiplot(plotlist = p, cols=columns)
 }
 
 
