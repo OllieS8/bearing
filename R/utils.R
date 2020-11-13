@@ -53,7 +53,6 @@ reproject_latlon <- function(df, old_crs = 4326, new_crs = 3502){
     sf::st_set_geometry(NULL)
 }
 
-
 hist_plot <- function(df, title_lab, x_lab, specific_variable){
   ggplot2::ggplot(data = df, ggplot2::aes_string(specific_variable)) +
     ggplot2::geom_histogram(colour="black", fill="blue") +
