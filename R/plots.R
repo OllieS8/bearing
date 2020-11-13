@@ -115,7 +115,7 @@ price_boxplot <- function(df, variable = c('All','PriceSold','PPSF','PPBR','PPUn
     specific_variable <- 'PriceSold'
     title_lab <- "Boxplot of Sold Price"
     y_lab <- "Reported Sold Price"
-    p1 <- box_plot(df, title_lab, y_lab, specific_variable)
+    p1 <- bearing::box_plot(df, title_lab, y_lab, specific_variable)
     p <- c(p, p1 = list(p1))
   }
 
@@ -124,7 +124,7 @@ price_boxplot <- function(df, variable = c('All','PriceSold','PPSF','PPBR','PPUn
     specific_variable <- 'PPSF'
     title_lab <- "Boxplot of Sold Price Per Sq Ft"
     y_lab <- "Reported Sold Price/SqFt"
-    p2 <- box_plot(df, title_lab, y_lab, specific_variable)
+    p2 <- bearing::box_plot(df, title_lab, y_lab, specific_variable)
     p <- c(p, p2 = list(p2))
   }
 
@@ -133,7 +133,7 @@ price_boxplot <- function(df, variable = c('All','PriceSold','PPSF','PPBR','PPUn
     specific_variable <- 'PPBR'
     title_lab <- "Boxplot of Sold Price/Bedroom"
     y_lab <- "Reported Sold Price/Bedroom"
-    p3 <- box_plot(df, title_lab, y_lab, specific_variable)
+    p3 <- bearing::box_plot(df, title_lab, y_lab, specific_variable)
     p <- c(p, p3 = list(p3))
   }
 
@@ -142,7 +142,7 @@ price_boxplot <- function(df, variable = c('All','PriceSold','PPSF','PPBR','PPUn
     specific_variable <- 'PPUnit'
     title_lab <- "Boxplot of Sold Price/Unit"
     y_lab <- "Reported Sold Price/Unit"
-    p4 <- box_plot(df, title_lab, y_lab, specific_variable)
+    p4 <- bearing::box_plot(df, title_lab, y_lab, specific_variable)
     p <- c(p, p4 = list(p4))
   }
 
