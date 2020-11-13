@@ -52,38 +52,41 @@ leaflet_plot <- function(df){
 sales_price_histogram <- function(df, variable = c("All", "PriceSold","PPSF","PPBR","PPUnit"), columns = 2){
 
   # variable <- match.arg(variable)
-
   p <- list()
 
-  if('PriceSold' %in% variable | variable == 'All'){
+  if('PriceSold' %in% variable | 'All' %in% variable){
     assertthat::assert_that(assertthat::has_name(df, 'PriceSold'), msg = 'PriceSold column needs to be spelt as follow: PriceSold')
+    specific_variable <- 'PriceSold'
     title_lab <- "Histogram of Sold Price"
     x_lab <- "Reported Sold Price"
-    p1 <- bearing::hist_plot(df, title_lab, x_lab)
+    p1 <- bearing::hist_plot(df, title_lab, x_lab, specific_variable)
     p <- list(p,p1)
   }
 
-  if('PPSF' %in% variable | variable == 'All'){
+  if('PPSF' %in% variable | 'All' %in% variable){
     assertthat::assert_that(assertthat::has_name(df, 'PPSF'), msg = 'PPSF column needs to be spelt as follow: PPSF')
+    specific_variable <- 'PPSF'
     title_lab <- "Histogram of Sold Price Per Sq Ft"
     x_lab <- "Reported Sold Price/SqFt"
-    p2 <- bearing::hist_plot(df, title_lab, x_lab)
+    p2 <- bearing::hist_plot(df, title_lab, x_lab, specific_variable)
     p <- list(p,p2)
   }
 
-  if('PPBR' %in% variable | variable == 'All'){
+  if('PPBR' %in% variable | 'All' %in% variable){
     assertthat::assert_that(assertthat::has_name(df, 'PPBR'), msg = 'PPBR column needs to be spelt as follow: PPBR')
+    specific_variable <- 'PPBR'
     title_lab <- "Histogram of Sold Price/Bedroom"
     x_lab <- "Reported Sold Price/Bedroom"
-    p3 <- bearing::hist_plot(df, title_lab, x_lab)
+    p3 <- bearing::hist_plot(df, title_lab, x_lab, specific_variable)
     p <- list(p,p3)
   }
 
-  if('PPUnit' %in% variable | variable == 'All'){
+  if('PPUnit' %in% variable | 'All' %in% variable){
     assertthat::assert_that(assertthat::has_name(df, 'PPUnit'), msg = 'PPUnit column needs to be spelt as follow: PPUnit')
+    specific_variable <- 'PPUnit'
     title_lab <- "Histogram of Sold Price/Unit"
     x_lab <- "Reported Sold Price/Unit"
-    p4 <- bearing::hist_plot(df, title_lab, x_lab)
+    p4 <- bearing::hist_plot(df, title_lab, x_lab, specific_variable)
     p <- list(p,p4)
   }
 

@@ -54,3 +54,8 @@ reproject_latlon <- function(df, old_crs = 4326, new_crs = 3502){
 }
 
 
+hist_plot <- function(df, title_lab, x_lab, specific_variable){
+  ggplot2::ggplot(data = df, ggplot2::aes_string(specific_variable)) +
+    ggplot2::geom_histogram(colour="black", fill="blue") +
+    ggplot2::labs(title = title_lab, x = x_lab, y = "Count", caption = "Valuemetrics.info SGDS2")
+}
