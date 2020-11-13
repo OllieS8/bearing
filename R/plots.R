@@ -41,7 +41,7 @@ leaflet_plot <- function(df){
 #' Create a histogram of different sales metrics
 #'
 #' @param df Data frame
-#' @param columns number of columns for plots - default = 2
+#' @param columns number of columns for plots - default = 1
 #' @param variable variable of interest: PriceSold, PPSF, PPBR or PPUnit.
 #'
 #' @return returns a histogram
@@ -49,7 +49,7 @@ leaflet_plot <- function(df){
 #'
 #' @examples Modified from g2- Case Study.Rmd:
 #' sales_price_histogram(Apartments3, variable = 'PriceSold', bin_width = 100000, xlimits = c(0,7500000))
-sales_price_histogram <- function(df, variable = c("All", "PriceSold","PPSF","PPBR","PPUnit"), columns = 2){
+sales_price_histogram <- function(df, variable = c("All", "PriceSold","PPSF","PPBR","PPUnit"), columns = 1){
 
   # variable <- match.arg(variable)
   p <- list()
@@ -60,7 +60,7 @@ sales_price_histogram <- function(df, variable = c("All", "PriceSold","PPSF","PP
     title_lab <- "Histogram of Sold Price"
     x_lab <- "Reported Sold Price"
     p1 <- bearing::hist_plot(df, title_lab, x_lab, specific_variable)
-    p <- list(p,p1)
+    p <- c(p, p1 = list(p1))
   }
 
   if('PPSF' %in% variable | 'All' %in% variable){
@@ -69,7 +69,7 @@ sales_price_histogram <- function(df, variable = c("All", "PriceSold","PPSF","PP
     title_lab <- "Histogram of Sold Price Per Sq Ft"
     x_lab <- "Reported Sold Price/SqFt"
     p2 <- bearing::hist_plot(df, title_lab, x_lab, specific_variable)
-    p <- list(p,p2)
+    p <- c(p, p2 = list(p2))
   }
 
   if('PPBR' %in% variable | 'All' %in% variable){
@@ -78,7 +78,7 @@ sales_price_histogram <- function(df, variable = c("All", "PriceSold","PPSF","PP
     title_lab <- "Histogram of Sold Price/Bedroom"
     x_lab <- "Reported Sold Price/Bedroom"
     p3 <- bearing::hist_plot(df, title_lab, x_lab, specific_variable)
-    p <- list(p,p3)
+    p <- c(p, p3 = list(p3))
   }
 
   if('PPUnit' %in% variable | 'All' %in% variable){
@@ -87,7 +87,7 @@ sales_price_histogram <- function(df, variable = c("All", "PriceSold","PPSF","PP
     title_lab <- "Histogram of Sold Price/Unit"
     x_lab <- "Reported Sold Price/Unit"
     p4 <- bearing::hist_plot(df, title_lab, x_lab, specific_variable)
-    p <- list(p,p4)
+    p <- c(p,p4 = list(p4))
   }
 
   options(scipen=999)

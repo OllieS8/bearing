@@ -7,7 +7,7 @@
 sales_price_histogram(
   df,
   variable = c("All", "PriceSold", "PPSF", "PPBR", "PPUnit"),
-  columns = 2
+  columns = 1
 )
 }
 \arguments{
@@ -15,7 +15,7 @@ sales_price_histogram(
 
 \item{variable}{variable of interest: PriceSold, PPSF, PPBR or PPUnit.}
 
-\item{columns}{number of columns for plots - default = 2}
+\item{columns}{number of columns for plots - default = 1}
 }
 \value{
 returns a histogram
