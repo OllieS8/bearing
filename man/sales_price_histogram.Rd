@@ -6,17 +6,16 @@
 \usage{
 sales_price_histogram(
   df,
-  variable = c("PriceSold", "PPSF", "PPBR", "PPUnit", "All")
+  variable = c("All", "PriceSold", "PPSF", "PPBR", "PPUnit"),
+  columns = 2
 )
 }
 \arguments{
-\item{df}{Data frame of}
+\item{df}{Data frame}
 
-\item{variable}{variable of interest: PriceSold, PPSF, PPBR or PPUnit}
+\item{variable}{variable of interest: PriceSold, PPSF, PPBR or PPUnit.}
 
-\item{bin_width}{width of histogram bins}
-
-\item{xlimits}{x axis limits}
+\item{columns}{number of columns for plots - default = 2}
 }
 \value{
 returns a histogram

@@ -15,3 +15,6 @@ returns data frame with Latitude and Longitude reprojected into EPSG 3502 (centr
 \description{
 Reproject lat/lon into planar coordinates
 }
+\examples{
+reproject_latlon(sales_with_knn, old_crs = 3502, new_crs = 4326)
+}

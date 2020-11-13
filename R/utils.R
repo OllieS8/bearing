@@ -43,7 +43,7 @@ rescale <- function(x, to = c(0, 1), from = range(x, na.rm = T, finite = T)) {
 #' @return returns data frame with Latitude and Longitude reprojected into EPSG 3502 (central colorado)
 #' @export
 #'
-#' @examples
+#' @examples reproject_latlon(sales_with_knn, old_crs = 3502, new_crs = 4326)
 reproject_latlon <- function(df, old_crs = 4326, new_crs = 3502){
   df %>%
     sf::st_as_sf(coords = c("Longitude", "Latitude"), crs = old_crs) %>%

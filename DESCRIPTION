@@ -17,4 +17,6 @@ Imports:
     assertthat,
     zoo,
     leaflet,
-    magrittr
+    magrittr,
+    sf,
+    lubridate
