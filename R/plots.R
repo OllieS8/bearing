@@ -93,7 +93,6 @@ sales_price_histogram <- function(df, variable = c("All", "PriceSold","PPSF","PP
   options(scipen=999)
 
   multiplot(plotlist = p, cols=columns)
-
 }
 
 
