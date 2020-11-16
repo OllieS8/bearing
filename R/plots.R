@@ -106,7 +106,7 @@ sales_price_histogram <- function(df, variable = c("All", "PriceSold","PPSF","PP
 #'
 #' @examples Modified from g2- Case Study.Rmd:
 #' price_boxplot(Apartments3, variable = 'PPSF')
-price_boxplot <- function(df, variable = c('All','PriceSold','PPSF','PPBR','PPUnit')){
+price_boxplot <- function(df, variable = c('All','PriceSold','PPSF','PPBR','PPUnit'), columns = 1){
 
   p <- list()
 
