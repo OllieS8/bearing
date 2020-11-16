@@ -4,7 +4,11 @@
 \alias{price_boxplot}
 \title{Create a boxplot of different sales metrics}
 \usage{
-price_boxplot(df, variable = c("All", "PriceSold", "PPSF", "PPBR", "PPUnit"))
+price_boxplot(
+  df,
+  variable = c("All", "PriceSold", "PPSF", "PPBR", "PPUnit"),
+  columns = 1
+)
 }
 \arguments{
 \item{df}{Data frame}
