@@ -245,16 +245,7 @@ sales_by_month <- function(df){
 #'
 #' @examples
 plot_clusters <- function(df){
-  tryCatch({
-    subject_apn <- get('subject_apn')
-  },
-  error=function(cond){
-    message('Error: Must run function define_subject before leaflet plot')
-  })
-
-  subj_cluster <- (df %>%
-                     dplyr::filter(APN == subject_apn) %>%
-                     dplyr::select(m))[[1]]
+  subj_cluster <- bearing::get_subj_cluster(df)
 
   bearing::leaflet_plot(df %>%
                           dplyr::filter(m == subj_cluster))

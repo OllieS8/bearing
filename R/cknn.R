@@ -288,3 +288,26 @@ recombine_data_knn <- function(initial_data, knn_object){
     dplyr::rename(Latitude = lat,
            Longitude = lon)
 }
+
+
+
+#' return subject cluster
+#'
+#' @param df data frame with subject property and cluster information
+#'
+#' @return returns the subject cluster
+#' @export
+#'
+#' @examples
+get_subj_cluster <- function(df){
+  tryCatch({
+    subject_apn <- get('subject_apn')
+  },
+  error=function(cond){
+    message('Error: Must run function define_subject before leaflet plot')
+  })
+
+  (df %>%
+      dplyr::filter(APN == subject_apn) %>%
+      dplyr::select(m))[[1]]
+}
