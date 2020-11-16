@@ -148,7 +148,7 @@ price_boxplot <- function(df, variable = c('All','PriceSold','PPSF','PPBR','PPUn
 
   options(scipen=999)
 
-  multiplot(plotlist = p, cols=columns)
+  bearing::multiplot(plotlist = p, cols=columns)
 }
 
 

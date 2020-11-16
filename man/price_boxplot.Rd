@@ -4,16 +4,12 @@
 \alias{price_boxplot}
 \title{Create a boxplot of different sales metrics}
 \usage{
-price_boxplot(
-  df,
-  variable = c("PriceSold", "PPSF", "PPBR", "PPUnit"),
-  ylimits = c(0, 7500000)
-)
+price_boxplot(df, variable = c("All", "PriceSold", "PPSF", "PPBR", "PPUnit"))
 }
 \arguments{
 \item{df}{Data frame}
 
-\item{variable}{variable of interest: PriceSold, PPSF, PPBR or PPUnit}
+\item{variable}{variable of interest: PriceSold, PPSF, PPBR or PPUnit. default = All.}
 
 \item{ylimits}{limits of y axis}
 }
@@ -25,5 +21,5 @@ Create a boxplot of different sales metrics
 }
 \examples{
 Modified from g2- Case Study.Rmd:
-price_boxplot(Apartments3, variable = 'PPSF', ylimits = c(0,750))
+price_boxplot(Apartments3, variable = 'PPSF')
 }
