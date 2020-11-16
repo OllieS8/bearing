@@ -311,3 +311,30 @@ get_subj_cluster <- function(df){
       dplyr::filter(APN == subject_apn) %>%
       dplyr::select(m))[[1]]
 }
+
+#' TReturn nearest neighbours data
+#'
+#' @param df data frame with nearest neighbours information
+#'
+#' @return returns data frame with just nearest neighbours and subject properties data
+#' @export
+#'
+#' @examples
+get_nn <- function(df){
+  tryCatch({
+    subject_apn <- get('subject_apn')
+  },
+  error=function(cond){
+    message('Error: Must run function define_subject before leaflet plot')
+  })
+
+  nn <- (df %>%
+           dplyr::filter(APN == subject_apn) %>%
+           dplyr::select(knn))[[1]] %>%
+    unlist()
+
+  rbind(df[nn,],
+        df %>%
+          dplyr::filter(APN == subject_apn))
+
+}

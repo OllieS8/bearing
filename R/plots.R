@@ -261,19 +261,7 @@ plot_clusters <- function(df){
 #'
 #' @examples
 plot_knn <- function(df){
-  tryCatch({
-    subject_apn <- get('subject_apn')
-  },
-  error=function(cond){
-    message('Error: Must run function define_subject before leaflet plot')
-  })
-
-  nn <- (df %>%
-           dplyr::filter(APN == subject_apn) %>%
-           dplyr::select(knn))[[1]] %>%
-    unlist()
-
-  sales_nn <- rbind(df[nn,], df %>% dplyr::filter(APN == subject_apn))
+  sales_nn <- get_nn(df)
 
   bearing::leaflet_plot(sales_nn)
 }
