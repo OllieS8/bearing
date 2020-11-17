@@ -350,10 +350,10 @@ get_nn <- function(df){
 #'
 #' @examples
 optimal_m <- function(df, m_values = 3:15, n_start = 5){
-  validation_kproto(method = "silhouette",
-                    data = df,
-                    k = m_values,
-                    nstart = n_start,
-                    verbose = FALSE)$k_opt
+  clustMixType::validation_kproto(method = "silhouette",
+                                  data = df,
+                                  k = m_values,
+                                  nstart = n_start,
+                                  verbose = FALSE)$k_opt
 }
 
