@@ -9,7 +9,7 @@
 #'
 #' @examples Modified from g2- Case Study.Rmd:
 #' leaflet_plot(Apartments2)
-leaflet_plot <- function(df){
+leaflet_plot <- function(df, subject_lng = subject_lng, subject_lat = subject_lat){
   assertthat::assert_that(assertthat::has_name(df, 'Latitude'), msg = 'Latitude column needs to be spelt as follow: Latitude')
   assertthat::assert_that(assertthat::has_name(df, 'Longitude'), msg = 'Longitude column needs to be spelt as follow: Longitude')
 
