@@ -267,12 +267,30 @@ plot_knn <- function(df){
 }
 
 
+#' Faceted histogram
+#'
+#' @param df data frame
+#' @param variable variable to examine across the different clusters
+#'
+#' @return returns histograms of the named variable for all the different clusters
+#' @export
+#'
+#' @examples
 facet_hist <- function(df, variable){
   ggplot2::ggplot(df, ggplot2::aes_string(x = variable)) +
     ggplot2::geom_histogram() +
     ggplot2::facet_grid(m ~ .)
 }
 
+#' Facet boxplot
+#'
+#' @param df data frame
+#' @param variable variable to examine across the different clusters
+#'
+#' @return returns boxplots of the named variable for all the different clusters
+#' @export
+#'
+#' @examples
 facet_boxplot <- function(df, variable){
   ggplot2::ggplot(data = df) +
     ggplot2::geom_boxplot(mapping = ggplot2::aes_string(y=variable)) +
