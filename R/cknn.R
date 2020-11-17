@@ -338,3 +338,22 @@ get_nn <- function(df){
           dplyr::filter(APN == subject_apn))
 
 }
+
+#' Finding the optimum number of clusters
+#'
+#' @param df data frame
+#' @param m_values m (number of clusters) values to test
+#' @param n_start number of repetitive computations of kproto with random initializations
+#'
+#' @return returns optimum number of clusters according to the silhouette index.
+#' @export
+#'
+#' @examples
+optimal_m <- function(df, m_values = 3:15, n_start = 5){
+  validation_kproto(method = "silhouette",
+                    data = df,
+                    k = m_values,
+                    nstart = n_start,
+                    verbose = FALSE)$k_opt
+}
+
