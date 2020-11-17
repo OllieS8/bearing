@@ -4,7 +4,7 @@
 \alias{leaflet_plot}
 \title{Create a leaflet plot of the subject and comparable properties}
 \usage{
-leaflet_plot(df)
+leaflet_plot(df, subject_lng = subject_lng, subject_lat = subject_lat)
 }
 \arguments{
 \item{df}{Data frame with comparable properties}
