@@ -265,3 +265,18 @@ plot_knn <- function(df){
 
   bearing::leaflet_plot(sales_nn)
 }
+
+
+facet_hist <- function(df, variable){
+  ggplot2::ggplot(df, ggplot2::aes_string(x = variable)) +
+    ggplot2::geom_histogram() +
+    ggplot2::facet_grid(m ~ .)
+}
+
+facet_boxplot <- function(df, variable){
+  ggplot2::ggplot(data = df) +
+    ggplot2::geom_boxplot(mapping = ggplot2::aes_string(y=variable)) +
+    ggplot2::guides(fill=FALSE) +
+    ggplot2::coord_flip() +
+    ggplot2::facet_grid(m ~ .)
+}
