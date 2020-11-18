@@ -4,7 +4,7 @@
 \alias{plot_clusters}
 \title{Plot subject property with other properties from same cluster}
 \usage{
-plot_clusters(df)
+plot_clusters(df, subj_cluster = subj_cluster)
 }
 \arguments{
 \item{df}{data frame from recombine_data_knn function}

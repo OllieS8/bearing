@@ -244,7 +244,7 @@ sales_by_month <- function(df){
 #' @export
 #'
 #' @examples
-plot_clusters <- function(df){
+plot_clusters <- function(df, subj_cluster = subj_cluster){
   subj_cluster <- bearing::get_subj_cluster(df)
 
   bearing::leaflet_plot(df %>%
