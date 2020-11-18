@@ -4,7 +4,7 @@
 \alias{get_subj_cluster}
 \title{return subject cluster}
 \usage{
-get_subj_cluster(df, ...)
+get_subj_cluster(df, subject_apn = NULL)
 }
 \arguments{
 \item{df}{data frame with subject property and cluster information}

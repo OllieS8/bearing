@@ -299,7 +299,7 @@ recombine_data_knn <- function(initial_data, knn_object){
 #' @export
 #'
 #' @examples
-get_subj_cluster <- function(df, ...){
+get_subj_cluster <- function(df, subject_apn = NULL){
   tryCatch({
     subject_apn <- get('subject_apn')
   },
@@ -312,7 +312,7 @@ get_subj_cluster <- function(df, ...){
       dplyr::select(m))[[1]]
 }
 
-#' TReturn nearest neighbours data
+#' Return nearest neighbours data
 #'
 #' @param df data frame with nearest neighbours information
 #'

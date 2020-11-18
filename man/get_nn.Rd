@@ -2,7 +2,7 @@
 % Please edit documentation in R/cknn.R
 \name{get_nn}
 \alias{get_nn}
-\title{TReturn nearest neighbours data}
+\title{Return nearest neighbours data}
 \usage{
 get_nn(df)
 }
@@ -13,5 +13,5 @@ get_nn(df)
 returns data frame with just nearest neighbours and subject properties data
 }
 \description{
-TReturn nearest neighbours data
+Return nearest neighbours data
 }
