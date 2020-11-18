@@ -1,14 +1,15 @@
 #' Create a leaflet plot of the subject and comparable properties
 #'
-#' @param ...
 #' @param df Data frame with comparable properties
+#' @param subject_lng subject longitude
+#' @param subject_lat subject latitude
 #'
 #' @return returns a leaflet plot with subject and comparable properties
 #' @export
 #'
 #' @examples Modified from g2- Case Study.Rmd:
 #' leaflet_plot(Apartments2)
-leaflet_plot <- function(df, ...){
+leaflet_plot <- function(df, subject_lng = NULL, subject_lat = NULL){
   assertthat::assert_that(assertthat::has_name(df, 'Latitude'), msg = 'Latitude column needs to be spelt as follow: Latitude')
   assertthat::assert_that(assertthat::has_name(df, 'Longitude'), msg = 'Longitude column needs to be spelt as follow: Longitude')
 
