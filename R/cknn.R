@@ -299,7 +299,7 @@ recombine_data_knn <- function(initial_data, knn_object){
 #' @export
 #'
 #' @examples
-get_subj_cluster <- function(df, subject_apn = subject_apn){
+get_subj_cluster <- function(df, ...){
   tryCatch({
     subject_apn <- get('subject_apn')
   },
