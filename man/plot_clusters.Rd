@@ -8,6 +8,12 @@ plot_clusters(df, subject_ap = subject_apn, subj_cluster = NULL, ...)
 }
 \arguments{
 \item{df}{data frame from recombine_data_knn function}
+
+\item{subject_ap}{subject property APN}
+
+\item{subj_cluster}{subject property cluster}
+
+\item{...}{}
 }
 \value{
 returns leaflet plot, with subject property and other properties from same cluster

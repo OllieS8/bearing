@@ -239,6 +239,9 @@ sales_by_month <- function(df){
 #' Plot subject property with other properties from same cluster
 #'
 #' @param df data frame from recombine_data_knn function
+#' @param subject_ap subject property APN
+#' @param subj_cluster subject property cluster
+#' @param ...
 #'
 #' @return returns leaflet plot, with subject property and other properties from same cluster
 #' @export
@@ -250,7 +253,9 @@ plot_clusters <- function(df, subject_ap = subject_apn, subj_cluster = NULL,...)
     subj_cluster <- bearing::get_subj_cluster(df, subject_apn)
   }
 
-  bearing::leaflet_plot(df %>% dplyr::filter(m == subj_cluster))
+  bearing::leaflet_plot(df %>% dplyr::filter(m == subj_cluster),
+                        subject_lng,
+                        subject_lat)
 }
 
 
