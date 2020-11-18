@@ -244,8 +244,10 @@ sales_by_month <- function(df){
 #' @export
 #'
 #' @examples
-plot_clusters <- function(df, subject_apn = subject_apn){
-  subj_cluster <- bearing::get_subj_cluster(df, subject_apn)
+plot_clusters <- function(df, subject_apn = subject_apn, subj_cluster = NULL){
+  if(is.null(subj_cluster) & !is.null(subject_apn)){
+    subj_cluster <- bearing::get_subj_cluster(df, subject_apn)
+  }
 
   bearing::leaflet_plot(df %>%
                           dplyr::filter(m == subj_cluster))
