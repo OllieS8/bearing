@@ -4,7 +4,7 @@
 \alias{get_nn}
 \title{Return nearest neighbours data}
 \usage{
-get_nn(df)
+get_nn(df, subject_apn = NULL)
 }
 \arguments{
 \item{df}{data frame with nearest neighbours information}

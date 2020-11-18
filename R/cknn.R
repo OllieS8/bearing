@@ -315,12 +315,13 @@ get_subj_cluster <- function(df, subject_apn = NULL){
 #' Return nearest neighbours data
 #'
 #' @param df data frame with nearest neighbours information
+#' @param subject_apn subject_apn - default = NULL for Rmd
 #'
 #' @return returns data frame with just nearest neighbours and subject properties data
 #' @export
 #'
 #' @examples
-get_nn <- function(df){
+get_nn <- function(df, subject_apn = NULL){
   tryCatch({
     subject_apn <- get('subject_apn')
   },
