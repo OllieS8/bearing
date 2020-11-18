@@ -249,8 +249,7 @@ plot_clusters <- function(df, subject_apn = subject_apn, subj_cluster = NULL){
     subj_cluster <- bearing::get_subj_cluster(df, subject_apn)
   }
 
-  bearing::leaflet_plot(df %>%
-                          dplyr::filter(m == subj_cluster))
+  bearing::leaflet_plot(df %>% dplyr::filter(m == subj_cluster))
 }
 
 
