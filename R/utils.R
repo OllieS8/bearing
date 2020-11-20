@@ -1731,3 +1731,8 @@ read_big_file <- function(x) {
   )
 }
 
+
+simple_read_xlsx <- function(x) {
+  y <- readxl::read_excel(x,
+                          col_types = "text")
+}
