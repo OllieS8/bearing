@@ -187,7 +187,7 @@ costar_sales <- function(input_file_path, output_file){
                           full.names = T)
 
   raw_dat <- purrr::map_df(.x = file_list,
-                           .f = bearing::read_simple_xlsx)
+                           .f = bearing::simple_read_xlsx)
 
 
   reorder <- raw_work %>% dplyr::select(
