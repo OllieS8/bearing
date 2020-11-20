@@ -192,7 +192,7 @@ costar_sales <- function(input_file_path, output_file){
   raw_work <- raw_dat %>%
     janitor::clean_names() %>%
     readr::type_convert(
-      col_types = cols(
+      col_types = readr::cols(
         .default = readr::col_character(),
         number_of_units = readr::col_double(),
         building_sf = readr::col_double(),
