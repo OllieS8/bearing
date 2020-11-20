@@ -105,7 +105,7 @@ multiplot <- function(..., plotlist=NULL, file, cols=1, layout=NULL) {
 
 
 read_big_file <- function(x) {
-  read_excel(
+  readxl::read_excel(
     x ,
     col_types = c(
       "text",
