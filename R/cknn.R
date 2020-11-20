@@ -285,8 +285,8 @@ recombine_data_knn <- function(initial_data, knn_object){
       m = knn_object$kproto$cluster,
       knn = knn_object$knn,
     ) %>%
-    dplyr::rename(Latitude = lat,
-           Longitude = lon)
+    dplyr::rename(latitude = lat,
+           longitude = lon)
 }
 
 

@@ -10,8 +10,8 @@
 #' @examples Modified from g2- Case Study.Rmd:
 #' leaflet_plot(Apartments2)
 leaflet_plot <- function(df, subject_lng = NULL, subject_lat = NULL){
-  assertthat::assert_that(assertthat::has_name(df, 'Latitude'), msg = 'Latitude column needs to be spelt as follow: Latitude')
-  assertthat::assert_that(assertthat::has_name(df, 'Longitude'), msg = 'Longitude column needs to be spelt as follow: Longitude')
+  assertthat::assert_that(assertthat::has_name(df, 'latitude'), msg = 'latitude column needs to be spelt as follow: latitude')
+  assertthat::assert_that(assertthat::has_name(df, 'longitude'), msg = 'longitude column needs to be spelt as follow: longitude')
 
   tryCatch({
     subject_lng <- get('subject_lng')
@@ -34,7 +34,7 @@ leaflet_plot <- function(df, subject_lng = NULL, subject_lat = NULL){
     leaflet::addCircleMarkers(layerId = "subj", lng = subject_lng, lat = subject_lat, popup = "Subject Property", radius = 10, color = "red",
                      weight = 5, opacity = 1, fill = TRUE, fillColor = "red",
                      fillOpacity = 1, dashArray = NULL,  popupOptions = NULL, label = NULL, labelOptions = NULL, options = leaflet::pathOptions(), clusterOptions = NULL, clusterId = NULL) %>%
-    leaflet::addMarkers(lng = ~Longitude, lat = ~Latitude, popup = paste("Address", df$Address, "<br>",
+    leaflet::addMarkers(lng = ~longitude, lat = ~latitude, popup = paste("Address", df$Address, "<br>",
                                                                         "Sale Price: $", df$PriceSold, "<br>"))
 }
 
