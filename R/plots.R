@@ -34,7 +34,7 @@ leaflet_plot <- function(df, subject_lng = NULL, subject_lat = NULL){
     leaflet::addCircleMarkers(layerId = "subj", lng = subject_lng, lat = subject_lat, popup = "Subject Property", radius = 10, color = "red",
                      weight = 5, opacity = 1, fill = TRUE, fillColor = "red",
                      fillOpacity = 1, dashArray = NULL,  popupOptions = NULL, label = NULL, labelOptions = NULL, options = leaflet::pathOptions(), clusterOptions = NULL, clusterId = NULL) %>%
-    leaflet::addMarkers(lng = ~longitude, lat = ~latitude, popup = paste("Address", df$Address, "<br>",
+    leaflet::addMarkers(lng = ~longitude, lat = ~latitude, popup = paste("Address", df$address, "<br>",
                                                                         "Sale Price: $", df$PriceSold, "<br>"))
 }
 
@@ -239,7 +239,7 @@ sales_by_month <- function(df){
 #' Plot subject property with other properties from same cluster
 #'
 #' @param df data frame from recombine_data_knn function
-#' @param subject_ap subject property APN
+#' @param subject_ap subject property id
 #' @param subj_cluster subject property cluster
 #' @param ...
 #'

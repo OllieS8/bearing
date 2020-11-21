@@ -308,7 +308,7 @@ get_subj_cluster <- function(df, subject_apn = NULL){
   })
 
   (df %>%
-      dplyr::filter(APN == subject_apn) %>%
+      dplyr::filter(apn == subject_apn) %>%
       dplyr::select(m))[[1]]
 }
 
@@ -330,13 +330,13 @@ get_nn <- function(df, subject_apn = NULL){
   })
 
   nn <- (df %>%
-           dplyr::filter(APN == subject_apn) %>%
+           dplyr::filter(apn == subject_apn) %>%
            dplyr::select(knn))[[1]] %>%
     unlist()
 
   rbind(df[nn,],
         df %>%
-          dplyr::filter(APN == subject_apn))
+          dplyr::filter(apn == subject_apn))
 
 }
 

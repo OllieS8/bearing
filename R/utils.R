@@ -3,17 +3,17 @@
 #' Define attributes of subject property
 #'
 #' @param df data frame containing subject property
-#' @param subject_apn APN of subject property
+#' @param subject_apn ID of subject property
 #'
 #' @return assigns the attributes to the global environment
 #' @export
 #'
 #' @examples
 define_subject <- function(df, subject_apn){
-  assertthat::assert_that(assertthat::has_name(df, 'APN'), msg = 'APN column needs to be spelt as follow: APN')
+  assertthat::assert_that(assertthat::has_name(df, 'apn'), msg = 'apn column needs to be spelt as follow: apn')
 
   subj_data <- df %>%
-    dplyr::filter(APN == subject_apn)
+    dplyr::filter(apn == subject_apn)
 
   assign('subject_lat', subj_data$latitude, envir = .GlobalEnv)
   assign('subject_lng', subj_data$longitude, envir = .GlobalEnv)

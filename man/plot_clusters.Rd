@@ -9,7 +9,7 @@ plot_clusters(df, subject_ap = subject_apn, subj_cluster = NULL)
 \arguments{
 \item{df}{data frame from recombine_data_knn function}
 
-\item{subject_ap}{subject property APN}
+\item{subject_ap}{subject property id}
 
 \item{subj_cluster}{subject property cluster}
 

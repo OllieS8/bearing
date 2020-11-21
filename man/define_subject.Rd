@@ -9,7 +9,7 @@ define_subject(df, subject_apn)
 \arguments{
 \item{df}{data frame containing subject property}
 
-\item{subject_apn}{APN of subject property}
+\item{subject_apn}{ID of subject property}
 }
 \value{
 assigns the attributes to the global environment
