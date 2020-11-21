@@ -7,10 +7,10 @@
 reproject_latlon(df, old_crs = 4326, new_crs = 3502)
 }
 \arguments{
-\item{df}{data frame containing Latitude and Longitude}
+\item{df}{data frame containing latitude and longitude}
 }
 \value{
-returns data frame with Latitude and Longitude reprojected into EPSG 3502 (central colorado)
+returns data frame with latitude and longitude reprojected into EPSG 3502 (central colorado)
 }
 \description{
 Reproject lat/lon into planar coordinates
