@@ -1,5 +1,5 @@
 ---
-title: "Apartments Example Shiny"
+title: "Clustering Example Shiny"
 author: "Oliver Summers"
 date: "16/11/2020"
 output: html_document
@@ -19,28 +19,52 @@ library(kableExtra)
 library(shiny)
 library(leaflet)
 library(DT)
-
-#import data
-data("ApartmentDataR")
-Apartments2 <- dplyr::left_join(Apartments, AssessorInfo, by = c("APN" = "APN"))
-Apartments2 <- Apartments2[!duplicated(Apartments2),]
-
-apt <- Apartments2 %>%
-  no_br() %>%
-  price_per() %>%
-  mutate(YearSold = lubridate::year(DateSold)) %>% 
-  filter(YrBlt != 0)
 ```
+
+## Load Dataset
+
+```{r echo=FALSE}
+inputPanel(
+  fileInput('data',
+            label = 'Property Data',
+            accept = c('.rds','.RData')
+  )
+)
+
+apt <- reactive({
+    readRDS(input$data$datapath) %>% 
+      janitor::clean_names()
+})
+
+renderUI({
+  inputPanel(
+    selectInput(
+      'id',
+      label = 'Select property id variable name',
+      choices = colnames(apt())
+    ),
+    selectInput(
+      'address',
+      label = 'Select property address variable name',
+      choices = colnames(apt())
+    )
+  )
+})
+
+```
+
 
 ## Choose the variables to use in the clustering algorithm:
 ```{r echo=FALSE}
-inputPanel(
-  selectInput('variables',
-              label= "Clustering Variables",
-              choices = colnames(apt)[!(colnames(apt) %in% c('APN', 'Latitude','Longitude','Address'))],
-              multiple =TRUE
+renderUI({
+  inputPanel(
+    selectInput('variables',
+                label= "Clustering Variables",
+                choices = colnames(apt()),
+                multiple = TRUE
+    )
   )
-)
+})
 ```
 
 ## Select if variables are numeric or categorical
@@ -68,23 +92,34 @@ renderUI({
 ```
 
 ## Select the Subject Property
+```{r include=FALSE}
+non_na <- reactive({
+  apt() %>% dplyr::rename(apn = input$id,
+                          address = input$address) %>%
+    select(c(input$variables, 'apn', 'latitude','longitude','address')) %>%
+    na.omit() 
+})
+
+```
+
 
 ```{r echo=FALSE}
-inputPanel(
-  selectInput('apn', label= "APN",choices = unique(Apartments2$APN)
-  )
-)
+renderUI({
+  inputPanel(
+    selectInput('apn', label= "Property ID", choices = non_na() %>% select(apn) %>% unique())
+    )
+})
 ```
 
 
 ```{r include=FALSE}
 subject <- reactive({
-  subj_data <- Apartments2 %>%
-    dplyr::filter(APN == input$apn)
+  subj_data <- non_na() %>%
+    dplyr::filter(apn == input$apn)
   
-  list(subject_lat = subj_data$Latitude, 
-       subject_lng = subj_data$Longitude, 
-       subject_apn = subj_data$APN)
+  list(subject_lat = subj_data$latitude, 
+       subject_lng = subj_data$longitude, 
+       subject_apn = subj_data$apn)
 })
 ```
 
@@ -94,7 +129,7 @@ This plot includes all of the properties in the dataset.
 
 ```{r echo=FALSE}
 renderLeaflet({
-  leaflet_plot(Apartments2, subject_lat = subject()$subject_lat, subject_lng = subject()$subject_lng)
+  leaflet_plot(non_na(), subject_lat = subject()$subject_lat, subject_lng = subject()$subject_lng)
 })
 ```
 
@@ -102,21 +137,19 @@ renderLeaflet({
 
 ```{r include=FALSE}
 clustered <- reactive({
-  apt <- apt %>%
-    select(c(input$variables, 'APN', 'Latitude','Longitude','Address')) %>%
-    na.omit() %>%
+  apt <- non_na() %>%
     mutate(across(input$numeric_variables, as.numeric),
           across(input$categorical_variables, as.factor)) %>%
     reproject_latlon()
     
   set.seed(100)
 
-  m <- optimal_m(apt %>% select(-c(lon,lat,APN,Address)),
+  m <- optimal_m(apt %>% select(-c(lon,lat,apn,address)),
                  m_values = 4:10,
                  n_start = 1)
   
   clusters <- cknn(
-      data = apt %>% select(-c(lon,lat,APN,Address)),
+      data = apt %>% select(-c(lon,lat,apn,address)),
       lon = apt %>% pull(lon),
       lat = apt %>% pull(lat),
       m = m,
@@ -128,8 +161,8 @@ clustered <- reactive({
   
   # reproject lat/lon to GPS coordinates - use colorado
   sales_with_knn <- reproject_latlon(sales_with_knn, old_crs = 3502, new_crs = 4326) %>%
-    rename(Latitude = lat,
-           Longitude = lon)
+    rename(latitude = lat,
+           longitude = lon)
   
   sales_with_knn
 })
@@ -162,7 +195,7 @@ renderDataTable({
 
   sales_with_knn %>%
     filter(m == subj_cluster) %>%
-    select(-c(knn,Latitude,Longitude, m)) %>%
+    select(-c(knn,latitude,longitude, m)) %>%
     summarytools::descr()
 
 })
@@ -243,7 +276,7 @@ renderDataTable({
   sales_nn <- get_nn(clustered(), subject_apn = subject()$subject_apn)
   
   sales_nn %>%
-    select(-c(knn,Latitude,Longitude, m)) %>% 
+    select(-c(knn,latitude,longitude, m)) %>% 
     summarytools::descr()
 })
 ```
@@ -258,6 +291,14 @@ renderUI({
       choices = input$numeric_variables
     )
   )
+})
+```
+
+### NN analysis
+```{r echo=FALSE}
+renderDataTable({
+  get_nn(clustered(), subject_apn = subject()$subject_apn) %>% 
+    select(-c(apn,m,latitude,longitude,knn))
 })
 ```
 
