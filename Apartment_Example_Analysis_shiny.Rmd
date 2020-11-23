@@ -203,7 +203,7 @@ renderDataTable({
 ```
 
 
-### Choose variable:
+### Choose numeric variable:
 
 ```{r echo=FALSE}
 renderUI({
@@ -226,6 +226,28 @@ renderPlot({
 ```{r echo=FALSE}
 renderPlot({
   facet_hist(clustered(), variable = input$plot_variable)
+})
+```
+
+### Choose categorical variable: 
+```{r echo=FALSE}
+renderUI({
+  inputPanel(
+    radioButtons(
+      inputId = 'plot_cat_variable',
+      label = 'Variable to plot',
+      choices = input$categorical_variables
+    )
+  )
+})
+```
+
+
+```{r echo=FALSE}
+renderPlot({
+  ggplot2::ggplot(clustered(), aes_string(x=input$plot_cat_variable)) +
+    geom_bar() +
+    facet_grid(m ~ .)
 })
 ```
 
@@ -293,7 +315,7 @@ renderDataTable({
 })
 ```
 
-### Choose variable:
+### Choose numerical variable:
 ```{r echo=FALSE}
 renderUI({
   inputPanel(
@@ -329,6 +351,31 @@ renderPlot({
   facet_boxplot(sales_nn, variable = input$plot_variable_nn)
 })
 ```
+
+### Choose categorical variable:
+```{r echo=FALSE}
+renderUI({
+  inputPanel(
+    radioButtons(
+      inputId = 'plot_cat_variable_nn',
+      label = 'Variable to plot',
+      choices = input$categorical_variables
+    )
+  )
+})
+```
+
+
+```{r echo=FALSE}
+renderPlot({
+  sales_nn <- get_nn(clustered(), subject_apn = subject()$subject_apn)
+  
+  ggplot2::ggplot(sales_nn, aes_string(x=input$plot_cat_variable_nn)) +
+    geom_bar() +
+    facet_grid(m ~ .)
+})
+```
+
 
 ### Plot nearest neighbours
 
