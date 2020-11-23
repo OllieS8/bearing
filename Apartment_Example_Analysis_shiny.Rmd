@@ -182,6 +182,7 @@ renderText({
 ```
 
 
+
 ### Summary stats of cluster
 
 We can then explore the summary statistics of the subject properties cluster, as well as compare to other clusters via histograms and boxplots. I have chosen to analyse PriceSold, but other variables can also be examined.
@@ -230,14 +231,25 @@ renderPlot({
 
 ### Plot same cluster apartments
 
+```{r echo=FALSE}
+renderUI({
+  inputPanel(
+    selectInput(
+      'cluster',
+      label = 'Choose cluster to plot (default = subject cluster)',
+      choices = clustered()$m %>% unique(),
+      selected = get_subj_cluster(clustered(), subject_apn = subject()$subject_apn)
+    )
+  )
+})
+```
+
 This plot shows the subject property and other properties that were found to be in the same cluster as it.
 ```{r echo=FALSE}
 renderLeaflet({
-  sapn <- subject()$subject_apn
   data <- clustered()
-  sc <- get_subj_cluster(data, subject_apn = sapn)
   
-  bearing::leaflet_plot(data %>% dplyr::filter(m == sc),
+  bearing::leaflet_plot(data %>% dplyr::filter(m == input$cluster),
                         subject_lat = subject()$subject_lat,
                         subject_lng = subject()$subject_lng)
 })
