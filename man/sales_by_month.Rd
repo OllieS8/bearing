@@ -7,7 +7,7 @@
 sales_by_month(df)
 }
 \arguments{
-\item{df}{Data frame with DateSold and PriceSold variables}
+\item{df}{Data frame with date_sold and price_sold variables}
 }
 \value{
 returns plot of Average and Median Sales Price by Month
