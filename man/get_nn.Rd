@@ -4,12 +4,12 @@
 \alias{get_nn}
 \title{Return nearest neighbours data}
 \usage{
-get_nn(df, subject_apn = NULL)
+get_nn(df, subject_pid = NULL)
 }
 \arguments{
 \item{df}{data frame with nearest neighbours information}
 
-\item{subject_apn}{subject_apn - default = NULL for Rmd}
+\item{subject_pid}{subject_pid - default = NULL for Rmd}
 }
 \value{
 returns data frame with just nearest neighbours and subject properties data

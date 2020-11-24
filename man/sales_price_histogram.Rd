@@ -6,14 +6,14 @@
 \usage{
 sales_price_histogram(
   df,
-  variable = c("All", "PriceSold", "PPSF", "PPBR", "PPUnit"),
+  variable = c("all", "price_sold", "ppsf", "ppbr", "ppunit"),
   columns = 1
 )
 }
 \arguments{
 \item{df}{Data frame}
 
-\item{variable}{variable of interest: PriceSold, PPSF, PPBR or PPUnit.}
+\item{variable}{variable of interest: price_sold, ppsf, ppbr or ppunit.}
 
 \item{columns}{number of columns for plots - default = 1}
 }
@@ -25,5 +25,5 @@ Create a histogram of different sales metrics
 }
 \examples{
 Modified from g2- Case Study.Rmd:
-sales_price_histogram(Apartments3, variable = 'PriceSold', bin_width = 100000, xlimits = c(0,7500000))
+sales_price_histogram(Apartments3, variable = 'price_sold', bin_width = 100000, xlimits = c(0,7500000))
 }

@@ -3,21 +3,21 @@
 #' Define attributes of subject property
 #'
 #' @param df data frame containing subject property
-#' @param subject_apn APN of subject property
+#' @param subject_pid ID of subject property
 #'
 #' @return assigns the attributes to the global environment
 #' @export
 #'
 #' @examples
-define_subject <- function(df, subject_apn){
-  assertthat::assert_that(assertthat::has_name(df, 'APN'), msg = 'APN column needs to be spelt as follow: APN')
+define_subject <- function(df, subject_pid){
+  assertthat::assert_that(assertthat::has_name(df, 'pid'), msg = 'property id column needs to be spelt as follow: pid')
 
   subj_data <- df %>%
-    dplyr::filter(APN == subject_apn)
+    dplyr::filter(pid == subject_pid)
 
-  assign('subject_lat', subj_data$Latitude, envir = .GlobalEnv)
-  assign('subject_lng', subj_data$Longitude, envir = .GlobalEnv)
-  assign('subject_apn', subject_apn, envir = .GlobalEnv)
+  assign('subject_lat', subj_data$latitude, envir = .GlobalEnv)
+  assign('subject_lng', subj_data$longitude, envir = .GlobalEnv)
+  assign('subject_pid', subject_pid, envir = .GlobalEnv)
 }
 
 # De-mean lat and lon coords such that their rescaled values will be relative
@@ -38,15 +38,15 @@ rescale <- function(x, to = c(0, 1), from = range(x, na.rm = T, finite = T)) {
 
 #' Reproject lat/lon into planar coordinates
 #'
-#' @param df data frame containing Latitude and Longitude
+#' @param df data frame containing latitude and longitude
 #'
-#' @return returns data frame with Latitude and Longitude reprojected into EPSG 3502 (central colorado)
+#' @return returns data frame with latitude and longitude reprojected into EPSG 3502 (central colorado)
 #' @export
 #'
 #' @examples reproject_latlon(sales_with_knn, old_crs = 3502, new_crs = 4326)
 reproject_latlon <- function(df, old_crs = 4326, new_crs = 3502){
   df %>%
-    sf::st_as_sf(coords = c("Longitude", "Latitude"), crs = old_crs) %>%
+    sf::st_as_sf(coords = c("longitude", "latitude"), crs = old_crs) %>%
     # https://spatialreference.org/ref/epsg/3502/
     sf::st_transform(new_crs) %>%
     dplyr::mutate(lon = st_coordinates(.)[, 1], lat = st_coordinates(.)[, 2]) %>%

@@ -1,0 +1,472 @@
+---
+title: "Clustering Example Shiny"
+author: "Oliver Summers"
+date: "16/11/2020"
+output: html_document
+runtime: shiny
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+options(scipen = 999)
+
+library(bearing)
+library(dplyr)
+library(sf)
+library(ggplot2)
+library(summarytools)
+library(kableExtra)
+library(shiny)
+library(leaflet)
+library(DT)
+library(mapview)
+```
+
+## Load Dataset
+
+```{r echo=FALSE}
+inputPanel(
+  fileInput('data',
+            label = 'Property Data',
+            accept = c('.rds','.RData')
+  )
+)
+
+apt <- reactive({
+    readRDS(input$data$datapath) %>% 
+      janitor::clean_names()
+})
+
+renderUI({
+  
+  req(input$data)
+  
+  inputPanel(
+    selectInput(
+      'id',
+      label = 'Select property id variable name',
+      choices = colnames(apt())
+    ),
+    selectInput(
+      'address',
+      label = 'Select property address variable name',
+      choices = colnames(apt())
+    )
+  )
+})
+
+```
+
+
+## Choose the variables to use in the clustering algorithm:
+```{r echo=FALSE}
+renderUI({
+  req(input$data)
+  
+  inputPanel(
+    selectInput('variables',
+                label= "Clustering Variables",
+                choices = colnames(apt()),
+                multiple = TRUE
+    )
+  )
+})
+```
+
+## Select if variables are numeric or categorical
+```{r echo=FALSE}
+renderUI({
+  req(input$variables)
+  
+  inputPanel(
+  conditionalPanel(
+    condition = "input['variables'].length > 0",
+    checkboxGroupInput("numeric_variables",
+                      label = "Numeric Variables",
+                      choices = input$variables,
+                      # multiple = TRUE
+                      )
+  ),
+  conditionalPanel(
+    condition = "input['variables'].length > 0",
+    checkboxGroupInput("categorical_variables",
+                      label = "Categorical Variables",
+                      choices = input$variables,
+                      # multiple = TRUE
+                      )
+  )
+)
+})
+```
+
+## Select the Subject Property
+```{r include=FALSE}
+non_na <- reactive({
+  req(input$id)
+  req(input$address)
+  
+  apt() %>% dplyr::rename(pid = input$id,
+                          address = input$address) %>%
+    select(c(input$variables, 'pid', 'latitude','longitude','address')) %>%
+    na.omit() 
+})
+
+```
+
+
+```{r echo=FALSE}
+renderUI({
+  inputPanel(
+    selectInput('pid', label= "Property ID", choices = non_na() %>% select(pid) %>% unique())
+    )
+})
+```
+
+
+```{r include=FALSE}
+subject <- reactive({
+  req(input$pid)
+  
+  subj_data <- non_na() %>%
+    dplyr::filter(pid == input$pid)
+  
+  list(subject_lat = subj_data$latitude, 
+       subject_lng = subj_data$longitude, 
+       subject_pid = subj_data$pid)
+})
+```
+
+## Initial Leaflet Plot - Dataset A
+
+This plot includes all of the properties in the dataset.
+
+```{r echo=FALSE}
+renderLeaflet({
+  bearing::leaflet_plot(non_na(), subject_lat = subject()$subject_lat, subject_lng = subject()$subject_lng)
+})
+
+downloadHandler(
+    filename =  'all_properties_leaflet.png',
+    # content is a function with argument file. content writes the plot to the device
+    content = function(file) {
+      mapshot(bearing::leaflet_plot(non_na(), 
+                           subject_lat = subject()$subject_lat, 
+                           subject_lng = subject()$subject_lng)
+               , file = file
+               , cliprect = "viewport" # the clipping rectangle matches the height & width from the viewing port
+               , selfcontained = FALSE)
+    
+    } 
+)
+
+```
+
+## Clustered properties - Dataset B
+```{r echo=FALSE}
+inputPanel(
+  actionButton('run_cluster',
+               'Re-run clustering algorithm',
+               icon = icon('refresh')
+  )
+)
+```
+
+
+```{r include=FALSE}
+clustered <- reactive({
+  input$run_cluster
+  
+  isolate({
+    apt <- non_na() %>%
+      mutate(across(input$numeric_variables, as.numeric),
+            across(input$categorical_variables, as.factor)) %>%
+      reproject_latlon()
+      
+    set.seed(100)
+  
+    m <- optimal_m(apt %>% select(-c(lon,lat,pid,address)),
+                   m_values = 4:10,
+                   n_start = 1)
+    
+    clusters <- cknn(
+        data = apt %>% select(-c(lon,lat,pid,address)),
+        lon = apt %>% pull(lon),
+        lat = apt %>% pull(lat),
+        m = m,
+        k = input$k,
+        l = input$l
+      )
+  
+    sales_with_knn <- recombine_data_knn(apt, clusters)
+    
+    # reproject lat/lon to GPS coordinates - use colorado
+    sales_with_knn <- reproject_latlon(sales_with_knn, old_crs = 3502, new_crs = 4326) %>%
+      rename(latitude = lat,
+             longitude = lon)
+    
+    sales_with_knn
+  })
+})
+```
+
+
+This dataset includes the subject property and the other properties in its cluster.
+
+```{r echo=FALSE}
+renderText({
+  sales_with_knn <- clustered()
+  spid <-subject()$subject_pid
+  subj_cluster <- get_subj_cluster(sales_with_knn, subject_pid = spid)
+
+  paste('The subject property is in cluster ', subj_cluster)
+})
+```
+
+
+
+### Summary stats of cluster
+
+We can then explore the summary statistics of the subject properties cluster, as well as compare to other clusters via histograms and boxplots. I have chosen to analyse PriceSold, but other variables can also be examined.
+
+
+```{r echo=FALSE}
+renderDataTable({
+  sales_with_knn <- clustered()
+  
+  subj_cluster <- get_subj_cluster(sales_with_knn, subject_pid = subject()$subject_pid)
+
+  sales_with_knn %>%
+    filter(m == subj_cluster) %>%
+    select(-c(knn,latitude,longitude, m)) %>%
+    summarytools::descr()
+
+})
+```
+
+
+### Choose numeric variable:
+
+```{r echo=FALSE}
+renderUI({
+  req(input$numeric_variables)
+  
+  inputPanel(
+    radioButtons(
+      inputId = 'plot_variable',
+      label = 'Variable to plot',
+      choices = input$numeric_variables
+    )
+  )
+})
+```
+
+```{r echo=FALSE}
+renderPlot({
+  facet_boxplot(clustered(), variable = input$plot_variable)
+})
+```
+
+```{r echo=FALSE}
+renderPlot({
+  facet_hist(clustered(), variable = input$plot_variable)
+})
+```
+
+### Choose categorical variable: 
+```{r echo=FALSE}
+renderUI({
+  req(input$categorical_variables)
+  
+  inputPanel(
+    radioButtons(
+      inputId = 'plot_cat_variable',
+      label = 'Variable to plot',
+      choices = input$categorical_variables
+    )
+  )
+})
+```
+
+
+```{r echo=FALSE}
+renderPlot({
+  ggplot2::ggplot(clustered(), aes_string(x=input$plot_cat_variable)) +
+    geom_bar() +
+    facet_grid(m ~ .)
+})
+```
+
+### Plot same cluster apartments
+
+```{r echo=FALSE}
+renderUI({
+  inputPanel(
+    selectInput(
+      'cluster',
+      label = 'Choose cluster to plot (default = subject cluster)',
+      choices = clustered()$m %>% unique(),
+      selected = get_subj_cluster(clustered(), subject_pid = subject()$subject_pid)
+    )
+  )
+})
+```
+
+This plot shows the subject property and other properties that were found to be in the same cluster as it.
+```{r echo=FALSE}
+renderLeaflet({
+  data <- clustered()
+  
+  bearing::leaflet_plot(data %>% dplyr::filter(m == input$cluster),
+                        subject_lat = subject()$subject_lat,
+                        subject_lng = subject()$subject_lng)
+
+})
+
+downloadHandler(
+    filename =  'cluster_leaflet.png',
+    # content is a function with argument file. content writes the plot to the device
+    content = function(file) {
+      mapshot(bearing::leaflet_plot(clustered() %>% dplyr::filter(m == input$cluster),
+                        subject_lat = subject()$subject_lat,
+                        subject_lng = subject()$subject_lng)
+               , file = file
+               , cliprect = "viewport" # the clipping rectangle matches the height & width from the viewing port
+               , selfcontained = FALSE)
+    
+    } 
+)
+
+```
+
+## Nearest Neighbours - Dataset C
+
+This dataset includes the subject property and it's nearest neighbours from the knn algorithm.
+
+
+### Select importance of distance and number of nearest neighbours:
+
+Distance importance is a hyperparameter representing the trade-off between distance and characteristics in the kNN matching. A value equal to 1 will match on distance only, while value equal to 0 will disregard distance and match on characteristics only.
+
+If selections are changed, please re-run the clustering algorithm (action button above)
+
+```{r echo=FALSE}
+inputPanel(
+  sliderInput('l',
+              label= "Importance of distance",
+              min=0,
+              max=1,
+              value=0.5
+  ),
+  sliderInput('k',
+              label = 'Number of nearest neighbours',
+              min=1,
+              max=15,
+              value = 10,
+              step=1)
+)
+```
+
+
+### NN summary stats
+```{r echo=FALSE}
+renderDataTable({
+  sales_nn <- get_nn(clustered(), subject_pid = subject()$subject_pid)
+  
+  sales_nn %>%
+    select(-c(knn,latitude,longitude, m)) %>% 
+    summarytools::descr()
+})
+```
+
+```{r echo=FALSE}
+renderDataTable({
+  get_nn(clustered(), subject_pid = subject()$subject_pid) %>% 
+    select(-c(pid,m,latitude,longitude,knn))
+})
+```
+
+### Choose numerical variable:
+```{r echo=FALSE}
+renderUI({
+  req(input$numeric_variables)
+  
+  inputPanel(
+    radioButtons(
+      inputId = 'plot_variable_nn',
+      label = 'Variable to plot',
+      choices = input$numeric_variables
+    )
+  )
+})
+```
+
+### NN analysis
+
+```{r echo=FALSE}
+renderPlot({
+  sales_nn <- get_nn(clustered(), subject_pid = subject()$subject_pid)
+  
+  facet_hist(sales_nn, variable = input$plot_variable_nn)
+})
+```
+
+```{r echo=FALSE}
+renderPlot({
+  sales_nn <- get_nn(clustered(), subject_pid = subject()$subject_pid)
+  
+  facet_boxplot(sales_nn, variable = input$plot_variable_nn)
+})
+```
+
+### Choose categorical variable:
+```{r echo=FALSE}
+renderUI({
+  req(input$categorical_variables)
+  
+  inputPanel(
+    radioButtons(
+      inputId = 'plot_cat_variable_nn',
+      label = 'Variable to plot',
+      choices = input$categorical_variables
+    )
+  )
+})
+```
+
+
+```{r echo=FALSE}
+renderPlot({
+  sales_nn <- get_nn(clustered(), subject_pid = subject()$subject_pid)
+  
+  ggplot2::ggplot(sales_nn, aes_string(x=input$plot_cat_variable_nn)) +
+    geom_bar() +
+    facet_grid(m ~ .)
+})
+```
+
+
+### Plot nearest neighbours
+
+```{r echo=FALSE}
+renderLeaflet({
+  sales_nn <- get_nn(clustered(), subject_pid = subject()$subject_pid)
+  
+  bearing::leaflet_plot(sales_nn,
+                        subject_lat = subject()$subject_lat,
+                        subject_lng = subject()$subject_lng)
+})
+
+downloadHandler(
+    filename =  'nn_leaflet.png',
+    # content is a function with argument file. content writes the plot to the device
+    content = function(file) {
+      mapshot(bearing::leaflet_plot(get_nn(clustered(), subject_pid = subject()$subject_pid),
+                        subject_lat = subject()$subject_lat,
+                        subject_lng = subject()$subject_lng)
+               , file = file
+               , cliprect = "viewport" # the clipping rectangle matches the height & width from the viewing port
+               , selfcontained = FALSE)
+    
+    } 
+)
+```

@@ -4,12 +4,12 @@
 \alias{define_subject}
 \title{Define attributes of subject property}
 \usage{
-define_subject(df, subject_apn)
+define_subject(df, subject_pid)
 }
 \arguments{
 \item{df}{data frame containing subject property}
 
-\item{subject_apn}{APN of subject property}
+\item{subject_pid}{ID of subject property}
 }
 \value{
 assigns the attributes to the global environment
