@@ -104,9 +104,9 @@ non_na <- reactive({
   req(input$id)
   req(input$address)
   
-  apt() %>% dplyr::rename(apn = input$id,
+  apt() %>% dplyr::rename(pid = input$id,
                           address = input$address) %>%
-    select(c(input$variables, 'apn', 'latitude','longitude','address')) %>%
+    select(c(input$variables, 'pid', 'latitude','longitude','address')) %>%
     na.omit() 
 })
 
@@ -116,7 +116,7 @@ non_na <- reactive({
 ```{r echo=FALSE}
 renderUI({
   inputPanel(
-    selectInput('apn', label= "Property ID", choices = non_na() %>% select(apn) %>% unique())
+    selectInput('pid', label= "Property ID", choices = non_na() %>% select(pid) %>% unique())
     )
 })
 ```
@@ -124,14 +124,14 @@ renderUI({
 
 ```{r include=FALSE}
 subject <- reactive({
-  req(input$apn)
+  req(input$pid)
   
   subj_data <- non_na() %>%
-    dplyr::filter(apn == input$apn)
+    dplyr::filter(pid == input$pid)
   
   list(subject_lat = subj_data$latitude, 
        subject_lng = subj_data$longitude, 
-       subject_apn = subj_data$apn)
+       subject_pid = subj_data$pid)
 })
 ```
 
@@ -168,12 +168,12 @@ clustered <- reactive({
       
     set.seed(100)
   
-    m <- optimal_m(apt %>% select(-c(lon,lat,apn,address)),
+    m <- optimal_m(apt %>% select(-c(lon,lat,pid,address)),
                    m_values = 4:10,
                    n_start = 1)
     
     clusters <- cknn(
-        data = apt %>% select(-c(lon,lat,apn,address)),
+        data = apt %>% select(-c(lon,lat,pid,address)),
         lon = apt %>% pull(lon),
         lat = apt %>% pull(lat),
         m = m,
@@ -199,8 +199,8 @@ This dataset includes the subject property and the other properties in its clust
 ```{r echo=FALSE}
 renderText({
   sales_with_knn <- clustered()
-  sapn <-subject()$subject_apn
-  subj_cluster <- get_subj_cluster(sales_with_knn, subject_apn = sapn)
+  spid <-subject()$subject_pid
+  subj_cluster <- get_subj_cluster(sales_with_knn, subject_pid = spid)
 
   paste('The subject property is in cluster ', subj_cluster)
 })
@@ -217,7 +217,7 @@ We can then explore the summary statistics of the subject properties cluster, as
 renderDataTable({
   sales_with_knn <- clustered()
   
-  subj_cluster <- get_subj_cluster(sales_with_knn, subject_apn = subject()$subject_apn)
+  subj_cluster <- get_subj_cluster(sales_with_knn, subject_pid = subject()$subject_pid)
 
   sales_with_knn %>%
     filter(m == subj_cluster) %>%
@@ -289,7 +289,7 @@ renderUI({
       'cluster',
       label = 'Choose cluster to plot (default = subject cluster)',
       choices = clustered()$m %>% unique(),
-      selected = get_subj_cluster(clustered(), subject_apn = subject()$subject_apn)
+      selected = get_subj_cluster(clustered(), subject_pid = subject()$subject_pid)
     )
   )
 })
@@ -338,7 +338,7 @@ inputPanel(
 ### NN summary stats
 ```{r echo=FALSE}
 renderDataTable({
-  sales_nn <- get_nn(clustered(), subject_apn = subject()$subject_apn)
+  sales_nn <- get_nn(clustered(), subject_pid = subject()$subject_pid)
   
   sales_nn %>%
     select(-c(knn,latitude,longitude, m)) %>% 
@@ -364,14 +364,14 @@ renderUI({
 ### NN analysis
 ```{r echo=FALSE}
 renderDataTable({
-  get_nn(clustered(), subject_apn = subject()$subject_apn) %>% 
-    select(-c(apn,m,latitude,longitude,knn))
+  get_nn(clustered(), subject_pid = subject()$subject_pid) %>% 
+    select(-c(pid,m,latitude,longitude,knn))
 })
 ```
 
 ```{r echo=FALSE}
 renderPlot({
-  sales_nn <- get_nn(clustered(), subject_apn = subject()$subject_apn)
+  sales_nn <- get_nn(clustered(), subject_pid = subject()$subject_pid)
   
   facet_hist(sales_nn, variable = input$plot_variable_nn)
 })
@@ -379,7 +379,7 @@ renderPlot({
 
 ```{r echo=FALSE}
 renderPlot({
-  sales_nn <- get_nn(clustered(), subject_apn = subject()$subject_apn)
+  sales_nn <- get_nn(clustered(), subject_pid = subject()$subject_pid)
   
   facet_boxplot(sales_nn, variable = input$plot_variable_nn)
 })
@@ -403,7 +403,7 @@ renderUI({
 
 ```{r echo=FALSE}
 renderPlot({
-  sales_nn <- get_nn(clustered(), subject_apn = subject()$subject_apn)
+  sales_nn <- get_nn(clustered(), subject_pid = subject()$subject_pid)
   
   ggplot2::ggplot(sales_nn, aes_string(x=input$plot_cat_variable_nn)) +
     geom_bar() +
@@ -416,7 +416,7 @@ renderPlot({
 
 ```{r echo=FALSE}
 renderLeaflet({
-  sales_nn <- get_nn(clustered(), subject_apn = subject()$subject_apn)
+  sales_nn <- get_nn(clustered(), subject_pid = subject()$subject_pid)
   
   bearing::leaflet_plot(sales_nn,
                         subject_lat = subject()$subject_lat,

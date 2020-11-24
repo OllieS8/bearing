@@ -299,44 +299,44 @@ recombine_data_knn <- function(initial_data, knn_object){
 #' @export
 #'
 #' @examples
-get_subj_cluster <- function(df, subject_apn = NULL){
+get_subj_cluster <- function(df, subject_pid = NULL){
   tryCatch({
-    subject_apn <- get('subject_apn')
+    subject_pid <- get('subject_pid')
   },
   error=function(cond){
     message('Error: Must run function define_subject before leaflet plot')
   })
 
   (df %>%
-      dplyr::filter(apn == subject_apn) %>%
+      dplyr::filter(pid == subject_pid) %>%
       dplyr::select(m))[[1]]
 }
 
 #' Return nearest neighbours data
 #'
 #' @param df data frame with nearest neighbours information
-#' @param subject_apn subject_apn - default = NULL for Rmd
+#' @param subject_pid subject_pid - default = NULL for Rmd
 #'
 #' @return returns data frame with just nearest neighbours and subject properties data
 #' @export
 #'
 #' @examples
-get_nn <- function(df, subject_apn = NULL){
+get_nn <- function(df, subject_pid = NULL){
   tryCatch({
-    subject_apn <- get('subject_apn')
+    subject_pid <- get('subject_pid')
   },
   error=function(cond){
     message('Error: Must run function define_subject before leaflet plot')
   })
 
   nn <- (df %>%
-           dplyr::filter(apn == subject_apn) %>%
+           dplyr::filter(pid == subject_pid) %>%
            dplyr::select(knn))[[1]] %>%
     unlist()
 
   rbind(df[nn,],
         df %>%
-          dplyr::filter(apn == subject_apn))
+          dplyr::filter(pid == subject_pid))
 
 }
 
