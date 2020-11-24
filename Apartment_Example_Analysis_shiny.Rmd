@@ -346,6 +346,13 @@ renderDataTable({
 })
 ```
 
+```{r echo=FALSE}
+renderDataTable({
+  get_nn(clustered(), subject_pid = subject()$subject_pid) %>% 
+    select(-c(pid,m,latitude,longitude,knn))
+})
+```
+
 ### Choose numerical variable:
 ```{r echo=FALSE}
 renderUI({
@@ -362,12 +369,6 @@ renderUI({
 ```
 
 ### NN analysis
-```{r echo=FALSE}
-renderDataTable({
-  get_nn(clustered(), subject_pid = subject()$subject_pid) %>% 
-    select(-c(pid,m,latitude,longitude,knn))
-})
-```
 
 ```{r echo=FALSE}
 renderPlot({
