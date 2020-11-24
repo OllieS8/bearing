@@ -37,6 +37,9 @@ apt <- reactive({
 })
 
 renderUI({
+  
+  req(input$data)
+  
   inputPanel(
     selectInput(
       'id',
@@ -57,6 +60,8 @@ renderUI({
 ## Choose the variables to use in the clustering algorithm:
 ```{r echo=FALSE}
 renderUI({
+  req(input$data)
+  
   inputPanel(
     selectInput('variables',
                 label= "Clustering Variables",
@@ -70,6 +75,8 @@ renderUI({
 ## Select if variables are numeric or categorical
 ```{r echo=FALSE}
 renderUI({
+  req(input$variables)
+  
   inputPanel(
   conditionalPanel(
     condition = "input['variables'].length > 0",
@@ -94,6 +101,9 @@ renderUI({
 ## Select the Subject Property
 ```{r include=FALSE}
 non_na <- reactive({
+  req(input$id)
+  req(input$address)
+  
   apt() %>% dplyr::rename(apn = input$id,
                           address = input$address) %>%
     select(c(input$variables, 'apn', 'latitude','longitude','address')) %>%
@@ -114,6 +124,8 @@ renderUI({
 
 ```{r include=FALSE}
 subject <- reactive({
+  req(input$apn)
+  
   subj_data <- non_na() %>%
     dplyr::filter(apn == input$apn)
   
@@ -134,37 +146,50 @@ renderLeaflet({
 ```
 
 ## Clustered properties - Dataset B
+```{r echo=FALSE}
+inputPanel(
+  actionButton('run_cluster',
+               'Re-run clustering algorithm',
+               icon = icon('refresh')
+  )
+)
+```
+
 
 ```{r include=FALSE}
 clustered <- reactive({
-  apt <- non_na() %>%
-    mutate(across(input$numeric_variables, as.numeric),
-          across(input$categorical_variables, as.factor)) %>%
-    reproject_latlon()
+  input$run_cluster
+  
+  isolate({
+    apt <- non_na() %>%
+      mutate(across(input$numeric_variables, as.numeric),
+            across(input$categorical_variables, as.factor)) %>%
+      reproject_latlon()
+      
+    set.seed(100)
+  
+    m <- optimal_m(apt %>% select(-c(lon,lat,apn,address)),
+                   m_values = 4:10,
+                   n_start = 1)
     
-  set.seed(100)
-
-  m <- optimal_m(apt %>% select(-c(lon,lat,apn,address)),
-                 m_values = 4:10,
-                 n_start = 1)
+    clusters <- cknn(
+        data = apt %>% select(-c(lon,lat,apn,address)),
+        lon = apt %>% pull(lon),
+        lat = apt %>% pull(lat),
+        m = m,
+        k = input$k,
+        l = input$l
+      )
   
-  clusters <- cknn(
-      data = apt %>% select(-c(lon,lat,apn,address)),
-      lon = apt %>% pull(lon),
-      lat = apt %>% pull(lat),
-      m = m,
-      k = input$k,
-      l = input$l
-    )
-
-  sales_with_knn <- recombine_data_knn(apt, clusters)
-  
-  # reproject lat/lon to GPS coordinates - use colorado
-  sales_with_knn <- reproject_latlon(sales_with_knn, old_crs = 3502, new_crs = 4326) %>%
-    rename(latitude = lat,
-           longitude = lon)
-  
-  sales_with_knn
+    sales_with_knn <- recombine_data_knn(apt, clusters)
+    
+    # reproject lat/lon to GPS coordinates - use colorado
+    sales_with_knn <- reproject_latlon(sales_with_knn, old_crs = 3502, new_crs = 4326) %>%
+      rename(latitude = lat,
+             longitude = lon)
+    
+    sales_with_knn
+  })
 })
 ```
 
@@ -207,6 +232,8 @@ renderDataTable({
 
 ```{r echo=FALSE}
 renderUI({
+  req(input$numeric_variables)
+  
   inputPanel(
     radioButtons(
       inputId = 'plot_variable',
@@ -232,6 +259,8 @@ renderPlot({
 ### Choose categorical variable: 
 ```{r echo=FALSE}
 renderUI({
+  req(input$categorical_variables)
+  
   inputPanel(
     radioButtons(
       inputId = 'plot_cat_variable',
@@ -286,6 +315,8 @@ This dataset includes the subject property and it's nearest neighbours from the 
 
 Distance importance is a hyperparameter representing the trade-off between distance and characteristics in the kNN matching. A value equal to 1 will match on distance only, while value equal to 0 will disregard distance and match on characteristics only.
 
+If selections are changed, please re-run the clustering algorithm (action button above)
+
 ```{r echo=FALSE}
 inputPanel(
   sliderInput('l',
@@ -318,6 +349,8 @@ renderDataTable({
 ### Choose numerical variable:
 ```{r echo=FALSE}
 renderUI({
+  req(input$numeric_variables)
+  
   inputPanel(
     radioButtons(
       inputId = 'plot_variable_nn',
@@ -355,6 +388,8 @@ renderPlot({
 ### Choose categorical variable:
 ```{r echo=FALSE}
 renderUI({
+  req(input$categorical_variables)
+  
   inputPanel(
     radioButtons(
       inputId = 'plot_cat_variable_nn',

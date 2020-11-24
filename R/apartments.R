@@ -7,12 +7,12 @@
 #'
 #' @examples
 no_br <- function(df){
-  assertthat::assert_that(assertthat::has_name(df, '1BR'), msg = '1BR column needs to be spelt as follow: 1BR')
-  assertthat::assert_that(assertthat::has_name(df, '2BR'), msg = '2BR column needs to be spelt as follow: 2BR')
-  assertthat::assert_that(assertthat::has_name(df, '3BR'), msg = '3BR column needs to be spelt as follow: 3BR')
+  assertthat::assert_that(assertthat::has_name(df, 'x1br'), msg = '1BR column needs to be spelt as follow: x1br')
+  assertthat::assert_that(assertthat::has_name(df, 'x2br'), msg = '2BR column needs to be spelt as follow: x2br')
+  assertthat::assert_that(assertthat::has_name(df, 'x3br'), msg = '3BR column needs to be spelt as follow: x3br')
 
   df %>%
-    dplyr::mutate(NoBR = (`1BR` + (2*`2BR`) + (3*`3BR`)))
+    dplyr::mutate(no_br = (x1br + (2*x2br) + (3*x3br)))
 }
 
 
@@ -25,15 +25,15 @@ no_br <- function(df){
 #'
 #' @examples
 price_per <- function(df){
-  assertthat::assert_that(assertthat::has_name(df, 'PriceSold'), msg = 'PriceSold column needs to be spelt as follow: PriceSold')
-  assertthat::assert_that(assertthat::has_name(df, 'SqFt'), msg = 'SqFt column needs to be spelt as follow: SqFt')
-  assertthat::assert_that(assertthat::has_name(df, 'NoUnits'), msg = 'NoUnits column needs to be spelt as follow: NoUnits')
-  assertthat::assert_that(assertthat::has_name(df, 'NoBR'), msg = 'NoBR column needs to be spelt as follow: NoBR')
+  assertthat::assert_that(assertthat::has_name(df, 'price_sold'), msg = 'PriceSold column needs to be spelt as follow: price_sold')
+  assertthat::assert_that(assertthat::has_name(df, 'sq_ft'), msg = 'SqFt column needs to be spelt as follow: sq_ft')
+  assertthat::assert_that(assertthat::has_name(df, 'no_units'), msg = 'NoUnits column needs to be spelt as follow: no_units')
+  assertthat::assert_that(assertthat::has_name(df, 'no_br'), msg = 'NoBR column needs to be spelt as follow: no_br')
 
   df %>%
-    dplyr::mutate(PPSF = PriceSold / SqFt  ) %>%
-    dplyr::mutate(PPUnit = PriceSold / NoUnits) %>%
-    dplyr::mutate(PPBR = PriceSold / NoBR)
+    dplyr::mutate(ppsf = price_sold / sq_ft  ) %>%
+    dplyr::mutate(ppunit = price_sold / no_units) %>%
+    dplyr::mutate(ppbr = price_sold / no_br)
 }
 
 
@@ -48,18 +48,18 @@ price_per <- function(df){
 #'
 #' @examples
 adj_ppunit <- function(df, from_date, value_date){
-  assertthat::assert_that(assertthat::has_name(df, 'DateSold'), msg = 'DateSold column needs to be spelt as follow: DateSold')
-  assertthat::assert_that(assertthat::has_name(df, 'PPUnit'), msg = 'PPUnit column needs to be spelt as follow: PPUnit')
+  assertthat::assert_that(assertthat::has_name(df, 'date_sold'), msg = 'DateSold column needs to be spelt as follow: date_sold')
+  assertthat::assert_that(assertthat::has_name(df, 'ppunit'), msg = 'PPUnit column needs to be spelt as follow: ppunit')
 
   df <- df %>%
-    dplyr::filter(DateSold >= from_date)
+    dplyr::filter(date_sold >= from_date)
 
-  MktCond <- stats::lm(PPUnit ~ DateSold, data = df)
+  MktCond <- stats::lm(ppunit ~ date_sold, data = df)
   MktCondAdj <- stats::coef(MktCond)[[2]]
 
   df %>%
-    dplyr::mutate(ChgInDays = lubridate::ymd(value_date) - lubridate::ymd(DateSold),
-                  AdjPPUnit = as.numeric(((MktCondAdj * ChgInDays * PPUnit) + PPUnit),units = "days"))
+    dplyr::mutate(chg_in_days = lubridate::ymd(value_date) - lubridate::ymd(date_sold),
+                  adj_ppunit = as.numeric(((MktCondAdj * chg_in_days * ppunit) + ppunit),units = "days"))
 
 }
 
@@ -72,11 +72,11 @@ adj_ppunit <- function(df, from_date, value_date){
 #'
 #' @examples
 avg_unitsf <- function(df){
-  assertthat::assert_that(assertthat::has_name(df, 'SqFt'), msg = 'SqFt column needs to be spelt as follow: SqFt')
-  assertthat::assert_that(assertthat::has_name(df, 'NoUnits'), msg = 'NoUnits column needs to be spelt as follow: NoUnits')
+  assertthat::assert_that(assertthat::has_name(df, 'sq_ft'), msg = 'SqFt column needs to be spelt as follow: sq_ft')
+  assertthat::assert_that(assertthat::has_name(df, 'no_units'), msg = 'NoUnits column needs to be spelt as follow: no_units')
 
   df %>%
-    dplyr::mutate(AvgUnitSF = SqFt / NoUnits)
+    dplyr::mutate(avg_unit_sf = sq_ft / no_units)
 }
 
 
@@ -90,16 +90,16 @@ avg_unitsf <- function(df){
 #'
 #' @examples
 adj_ppsize <- function(df, SubjAvgUnitSF){
-  assertthat::assert_that(assertthat::has_name(df, 'AvgUnitSF'), msg = 'AvgUnitSF column needs to be spelt as follow: AvgUnitSF')
-  assertthat::assert_that(assertthat::has_name(df, 'PPUnit'), msg = 'PPUnit column needs to be spelt as follow: PPUnit')
-  assertthat::assert_that(assertthat::has_name(df, 'AdjPPUnit'), msg = 'AdjPPUnit column needs to be spelt as follow: AdjPPUnit')
+  assertthat::assert_that(assertthat::has_name(df, 'avg_unit_sf'), msg = 'AvgUnitSF column needs to be spelt as follow: avg_unit_sf')
+  assertthat::assert_that(assertthat::has_name(df, 'ppunit'), msg = 'PPUnit column needs to be spelt as follow: ppunit')
+  assertthat::assert_that(assertthat::has_name(df, 'adj_ppunit'), msg = 'AdjPPUnit column needs to be spelt as follow: adj_ppunit')
 
-  UnitSize <- stats::lm(PPUnit ~ AvgUnitSF, data = df)
+  UnitSize <- stats::lm(ppunit ~ avg_unit_sf, data = df)
   SizeAdj <- stats::coef(UnitSize)[[2]]
 
   df %>%
-    dplyr::mutate(ChgInUnitSF = SubjAvgUnitSF - AvgUnitSF,
-                  IndPPUnit = (SizeAdj* ChgInUnitSF) + AdjPPUnit)
+    dplyr::mutate(chg_in_unit_sf = subj_avg_unit_sf - avg_unit_sf,
+                  IndPPUnit = (SizeAdj* chg_in_unit_sf) + adj_ppunit)
 }
 
 
