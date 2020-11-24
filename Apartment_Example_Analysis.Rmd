@@ -21,7 +21,8 @@ library(kableExtra)
 data("ApartmentDataR")
 Apartments2 <- dplyr::left_join(Apartments, AssessorInfo, by = c("APN" = "APN"))
 Apartments2 <- Apartments2[!duplicated(Apartments2),] %>% 
-  janitor::clean_names()
+  janitor::clean_names() %>% 
+  rename(pid = apn)
 
 
 ```
@@ -29,7 +30,7 @@ Apartments2 <- Apartments2[!duplicated(Apartments2),] %>%
 Use define_subject function to set global variables of subjects lat/lon to be used in leaflet plots.
 ```{r}
 define_subject(Apartments2,
-               subject_apn = '444-373-06-00')
+               subject_pid = '444-373-06-00')
 ```
 
 ## Initial Leaflet Plot - Dataset A
@@ -37,7 +38,7 @@ define_subject(Apartments2,
 This plot includes all of the properties in the dataset. 
 
 ```{r}
-leaflet_plot(Apartments2, subject_lat, subject_lng)
+leaflet_plot(Apartments2, subject_lng, subject_lat)
 ```
 
 ## Data Preparation
@@ -48,7 +49,7 @@ apt <- Apartments2 %>%
   no_br() %>% 
   price_per() %>% 
   mutate(year_sold = lubridate::year(date_sold)) %>%
-  select(apn,
+  select(pid,
          address,
          down_payment,
          studio,
@@ -82,7 +83,7 @@ num_clusts <- 2:15
 # Loop through different values of m, outputting the results to a list
 clusts <- lapply(num_clusts, function(m) {
   cknn(
-    data = apt %>% select(-c(lon,lat,apn,address)),
+    data = apt %>% select(-c(lon,lat,pid,address)),
     lon = apt %>% pull(lon),
     lat = apt %>% pull(lat),
     m = m,
@@ -99,13 +100,13 @@ clusts <- lapply(num_clusts, function(m) {
 ```{r}
 set.seed(100)
 
-m <- optimal_m(apt %>% select(-c(lon,lat,apn,address)),
+m <- optimal_m(apt %>% select(-c(lon,lat,pid,address)),
                m_values = 4:10,
                n_start = 1)
 print(m)
 
 clusters <- cknn(
-    data = apt %>% select(-c(lon,lat,apn,address)),
+    data = apt %>% select(-c(lon,lat,pid,address)),
     lon = apt %>% pull(lon),
     lat = apt %>% pull(lat),
     m = m,
@@ -149,7 +150,7 @@ sales_with_knn <- reproject_latlon(sales_with_knn, old_crs = 3502, new_crs = 432
 We can then explore the summary statistics of the subject properties cluster, as well as compare to other clusters via histograms and boxplots. I have chosen to analyse PriceSold, but other variables can also be examined.
 
 ```{r}
-subj_cluster <- get_subj_cluster(sales_with_knn, subject_apn)
+subj_cluster <- get_subj_cluster(sales_with_knn, subject_pid)
 
 sales_with_knn %>% 
   filter(m == subj_cluster) %>%
@@ -180,7 +181,7 @@ This dataset includes the subject property and it's 10 nearest neighbours from t
 
 ### NN summary stats
 ```{r}
-sales_nn <- get_nn(sales_with_knn, subject_apn)
+sales_nn <- get_nn(sales_with_knn, subject_pid)
 
 sales_nn %>% 
   summarytools::descr() %>% 
