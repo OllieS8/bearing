@@ -1,0 +1,197 @@
+---
+title: "Apartments Example Analysis"
+author: "Oliver Summers"
+date: "16/11/2020"
+output:
+  html_document: default
+  pdf_document: default
+---
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+options(scipen = 999)
+
+library(bearing)
+library(dplyr)
+library(sf)
+library(ggplot2)
+library(summarytools)
+library(kableExtra)
+
+#import data
+data("ApartmentDataR")
+Apartments2 <- dplyr::left_join(Apartments, AssessorInfo, by = c("APN" = "APN"))
+Apartments2 <- Apartments2[!duplicated(Apartments2),] %>% 
+  janitor::clean_names()
+
+
+```
+## Defining Subject Property
+Use define_subject function to set global variables of subjects lat/lon to be used in leaflet plots.
+```{r}
+define_subject(Apartments2,
+               subject_apn = '444-373-06-00')
+```
+
+## Initial Leaflet Plot - Dataset A
+
+This plot includes all of the properties in the dataset. 
+
+```{r}
+leaflet_plot(Apartments2, subject_lat, subject_lng)
+```
+
+## Data Preparation
+
+We need to select columns to feed in to the clustering algorithm, using a select statement. Unfortunately, the algorithm cannot handle missing values (NA), so we need to omit these rows. In the future, we could look to impute these values. All values need to be converted to either numeric (for k-means) or factor (for k-modes). Finally, the lat/lon values (in GPS coords) need to be reprojected into a planar projection for the knn algorithm.
+```{r}
+apt <- Apartments2 %>%
+  no_br() %>% 
+  price_per() %>% 
+  mutate(year_sold = lubridate::year(date_sold)) %>%
+  select(apn,
+         address,
+         down_payment,
+         studio,
+         sq_ft,
+         yr_blt,
+         land_sf,
+         no_units,
+         ppunit,
+         ppsf,
+         no_br,
+         price_sold,
+         zip,
+         year_sold,
+         longitude,
+         latitude) %>%
+  na.omit() %>%
+  filter(yr_blt != 0) %>%
+  mutate(across(c(down_payment:price_sold), as.numeric),
+         across(c(zip:year_sold), as.factor)) %>% 
+  reproject_latlon()
+```
+
+## Clustering Algorithm
+
+For the kproto clustering algorithm to work, you must provide the number of clusters you wish to find. For this example, we can loop through multiple values for the number of clusters and choose which is best. A way to automate this could be researched, or we could simply assign a number of clusters. 
+
+```{r}
+# Set the number of potential clusters to try
+num_clusts <- 2:15
+
+# Loop through different values of m, outputting the results to a list
+clusts <- lapply(num_clusts, function(m) {
+  cknn(
+    data = apt %>% select(-c(lon,lat,apn,address)),
+    lon = apt %>% pull(lon),
+    lat = apt %>% pull(lat),
+    m = m,
+    k = 10,
+    l = 0.5
+  )
+})
+
+```
+
+
+### Automatic optimum m
+
+```{r}
+set.seed(100)
+
+m <- optimal_m(apt %>% select(-c(lon,lat,apn,address)),
+               m_values = 4:10,
+               n_start = 1)
+print(m)
+
+clusters <- cknn(
+    data = apt %>% select(-c(lon,lat,apn,address)),
+    lon = apt %>% pull(lon),
+    lat = apt %>% pull(lat),
+    m = m,
+    k = 10,
+    l = 0.5
+  )
+```
+
+## Best Cluster - Dataset B
+We use the elbow method to determine the optimum number of clusters. 
+
+```{r}
+# Elbow plot of total sum square dists * number of clusters
+data.frame(
+  m = num_clusts,
+  ss = sapply(clusts, function(x) x$kproto$tot.withinss)
+) %>%
+  ggplot() +
+  geom_line(aes(x = m, y = ss), size = 1.2, color = "blue") +
+  labs(x = "# of Clusters", y = "Total Sum Square Dists") +
+  theme_minimal()
+
+```
+
+From the plot, it looks like 6 clusters would be a reasonable compromise. We can take the outputs for this many clusters, recombine it with the original data and then reproject the lat/lon coordinates back into GPS coordinates.
+
+```{r}
+best_clust <- clusts[[5 - 1]]
+best_clust <- clusters
+
+sales_with_knn <- recombine_data_knn(apt, best_clust)
+
+# reproject lat/lon to GPS coordinates - use colorado
+sales_with_knn <- reproject_latlon(sales_with_knn, old_crs = 3502, new_crs = 4326) %>%
+  rename(latitude = lat,
+         longitude = lon)
+```
+
+### Summary stats of cluster
+
+We can then explore the summary statistics of the subject properties cluster, as well as compare to other clusters via histograms and boxplots. I have chosen to analyse PriceSold, but other variables can also be examined.
+
+```{r}
+subj_cluster <- get_subj_cluster(sales_with_knn, subject_apn)
+
+sales_with_knn %>% 
+  filter(m == subj_cluster) %>%
+  summarytools::descr() %>% 
+  kbl() %>% 
+  kable_paper("hover", full_width = F)
+```
+
+```{r}
+facet_boxplot(sales_with_knn, variable = 'price_sold')
+
+```
+
+```{r}
+facet_hist(sales_with_knn, 'price_sold')
+```
+
+### Plot same cluster apartments
+
+This plot shows the subject property and other properties that were found to be in the same cluster as it.
+```{r}
+plot_clusters(sales_with_knn)
+```
+
+## Nearest Neighbours - Dataset C
+
+This dataset includes the subject property and it's 10 nearest neighbours from the knn algorithm.
+
+### NN summary stats
+```{r}
+sales_nn <- get_nn(sales_with_knn, subject_apn)
+
+sales_nn %>% 
+  summarytools::descr() %>% 
+  kbl %>% 
+  kable_paper("hover", full_width = F)
+```
+
+### Plot nearest neighbours
+
+```{R}
+leaflet_plot(sales_nn,
+             subject_lng,
+             subject_lat)
+```
