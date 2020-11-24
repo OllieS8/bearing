@@ -19,6 +19,7 @@ library(kableExtra)
 library(shiny)
 library(leaflet)
 library(DT)
+library(mapview)
 ```
 
 ## Load Dataset
@@ -141,8 +142,23 @@ This plot includes all of the properties in the dataset.
 
 ```{r echo=FALSE}
 renderLeaflet({
-  leaflet_plot(non_na(), subject_lat = subject()$subject_lat, subject_lng = subject()$subject_lng)
+  bearing::leaflet_plot(non_na(), subject_lat = subject()$subject_lat, subject_lng = subject()$subject_lng)
 })
+
+downloadHandler(
+    filename =  'all_properties_leaflet.png',
+    # content is a function with argument file. content writes the plot to the device
+    content = function(file) {
+      mapshot(bearing::leaflet_plot(non_na(), 
+                           subject_lat = subject()$subject_lat, 
+                           subject_lng = subject()$subject_lng)
+               , file = file
+               , cliprect = "viewport" # the clipping rectangle matches the height & width from the viewing port
+               , selfcontained = FALSE)
+    
+    } 
+)
+
 ```
 
 ## Clustered properties - Dataset B
@@ -303,7 +319,23 @@ renderLeaflet({
   bearing::leaflet_plot(data %>% dplyr::filter(m == input$cluster),
                         subject_lat = subject()$subject_lat,
                         subject_lng = subject()$subject_lng)
+
 })
+
+downloadHandler(
+    filename =  'cluster_leaflet.png',
+    # content is a function with argument file. content writes the plot to the device
+    content = function(file) {
+      mapshot(bearing::leaflet_plot(clustered() %>% dplyr::filter(m == input$cluster),
+                        subject_lat = subject()$subject_lat,
+                        subject_lng = subject()$subject_lng)
+               , file = file
+               , cliprect = "viewport" # the clipping rectangle matches the height & width from the viewing port
+               , selfcontained = FALSE)
+    
+    } 
+)
+
 ```
 
 ## Nearest Neighbours - Dataset C
@@ -423,4 +455,18 @@ renderLeaflet({
                         subject_lat = subject()$subject_lat,
                         subject_lng = subject()$subject_lng)
 })
+
+downloadHandler(
+    filename =  'nn_leaflet.png',
+    # content is a function with argument file. content writes the plot to the device
+    content = function(file) {
+      mapshot(bearing::leaflet_plot(get_nn(clustered(), subject_pid = subject()$subject_pid),
+                        subject_lat = subject()$subject_lat,
+                        subject_lng = subject()$subject_lng)
+               , file = file
+               , cliprect = "viewport" # the clipping rectangle matches the height & width from the viewing port
+               , selfcontained = FALSE)
+    
+    } 
+)
 ```
