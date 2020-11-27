@@ -49,7 +49,7 @@ reproject_latlon <- function(df, old_crs = 4326, new_crs = 3502){
     sf::st_as_sf(coords = c("longitude", "latitude"), crs = old_crs) %>%
     # https://spatialreference.org/ref/epsg/3502/
     sf::st_transform(new_crs) %>%
-    dplyr::mutate(lon = st_coordinates(.)[, 1], lat = st_coordinates(.)[, 2]) %>%
+    dplyr::mutate(lon = sf::st_coordinates(.)[, 1], lat = sf::st_coordinates(.)[, 2]) %>%
     sf::st_set_geometry(NULL)
 }
 
