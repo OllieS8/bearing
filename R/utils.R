@@ -11,6 +11,7 @@
 #' @examples
 define_subject <- function(df, subject_pid){
   assertthat::assert_that(assertthat::has_name(df, 'pid'), msg = 'property id column needs to be spelt as follow: pid')
+  assertthat::assert_that(assertthat::has_name(df, 'address'), msg = 'property address column needs to be spelt as follow: address')
 
   subj_data <- df %>%
     dplyr::filter(pid == subject_pid)
@@ -18,6 +19,7 @@ define_subject <- function(df, subject_pid){
   assign('subject_lat', subj_data$latitude, envir = .GlobalEnv)
   assign('subject_lng', subj_data$longitude, envir = .GlobalEnv)
   assign('subject_pid', subject_pid, envir = .GlobalEnv)
+  assign('subect_address', subj_data$address, envir = .GlobalEnv)
 }
 
 # De-mean lat and lon coords such that their rescaled values will be relative
