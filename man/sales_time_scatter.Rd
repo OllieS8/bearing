@@ -4,21 +4,22 @@
 \alias{sales_time_scatter}
 \title{Title}
 \usage{
-sales_time_scatter(df, ylimits = c(0, 350000))
+sales_time_scatter(df, sales_var = "price_sold", group_var = "subject_m")
 }
 \arguments{
 \item{df}{data frame}
 
-\item{ylimits}{limits of y axis}
+\item{sales_var}{sales variable to use for plot. Default = price_sold}
+
+\item{group_var}{variable to group on. Default = subject_m}
 }
 \value{
-returns a scatter plot of reported sale price per unit vs reported sale data,
+returns a scatter plot of a sales price variable vs reported sale date,
 including a fitted line of best fit.
 }
 \description{
 Title
 }
 \examples{
-Modified from g2- Case Study.Rmd:
-sales_time_scatter(Apartments4)
+sales_time_scatter(sales_with_knn, sales_var = 'price_sold')
 }
