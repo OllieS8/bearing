@@ -154,24 +154,22 @@ price_boxplot <- function(df, variable = c('all','price_sold','ppsf','ppbr','ppu
 
 #' Title
 #'
+#' @param sales_var sales variable to use for plot. Default = price_sold
+#' @param group_var variable to group on. Default = subject_m
 #' @param df data frame
-#' @param ylimits limits of y axis
 #'
-#' @return returns a scatter plot of reported sale price per unit vs reported sale data,
+#' @return returns a scatter plot of a sales price variable vs reported sale date,
 #' including a fitted line of best fit.
 #' @export
 #'
-#' @examples Modified from g2- Case Study.Rmd:
-#' sales_time_scatter(Apartments4)
-sales_time_scatter <- function(df, ylimits = c(0, 350000)){
+#' @examples sales_time_scatter(sales_with_knn, sales_var = 'price_sold')
+sales_time_scatter <- function(df, sales_var = 'price_sold', group_var = 'subject_m'){
   assertthat::assert_that(assertthat::has_name(df, 'date_sold'), msg = 'date_sold column needs to be spelt as follow: date_sold')
-  assertthat::assert_that(assertthat::has_name(df, 'ppunit'), msg = 'ppunit column needs to be spelt as follow: ppunit')
 
-  ggplot2::ggplot(df, ggplot2::aes(date_sold, ppunit)) +
+  ggplot2::ggplot(df, ggplot2::aes_string(x = 'date_sold', y = sales_var, color = group_var)) +
     ggplot2::geom_point(shape = 16) +
     ggplot2::geom_smooth(method = lm, se = FALSE) +
-    ggplot2::ylim(ylimits) +
-    ggplot2::labs(title = "Market Conditions", x = "Reported Sale Date", y = "Reported Sale Price Per Unit", caption = "Valuemetrics.info SGDS2")
+    ggplot2::labs(title = "Market Conditions", x = "Reported Sale Date", y = sales_var)
 }
 
 
