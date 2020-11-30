@@ -163,7 +163,7 @@ price_boxplot <- function(df, variable = c('all','price_sold','ppsf','ppbr','ppu
 #' @export
 #'
 #' @examples sales_time_scatter(sales_with_knn, sales_var = 'price_sold')
-sales_time_scatter <- function(df, sales_var = 'price_sold', group_var = 'subject_m'){
+sales_time_scatter <- function(df, sales_var = 'price_sold', group_var = 'subject_cluster'){
   assertthat::assert_that(assertthat::has_name(df, 'date_sold'), msg = 'date_sold column needs to be spelt as follow: date_sold')
 
   ggplot2::ggplot(df, ggplot2::aes_string(x = 'date_sold', y = sales_var, color = group_var)) +

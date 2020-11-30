@@ -4,7 +4,7 @@
 \alias{sales_time_scatter}
 \title{Title}
 \usage{
-sales_time_scatter(df, sales_var = "price_sold", group_var = "subject_m")
+sales_time_scatter(df, sales_var = "price_sold", group_var = "subject_cluster")
 }
 \arguments{
 \item{df}{data frame}
