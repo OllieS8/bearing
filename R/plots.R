@@ -164,9 +164,9 @@ price_boxplot <- function(df, variable = c('all','sales_price','ppsf','ppbr','pp
 #'
 #' @examples sales_time_scatter(sales_with_knn, sales_var = 'sales_price')
 sales_time_scatter <- function(df, sales_var = 'sales_price', group_var = 'subject_cluster'){
-  assertthat::assert_that(assertthat::has_name(df, 'date_sold'), msg = 'date_sold column needs to be spelt as follow: date_sold')
+  assertthat::assert_that(assertthat::has_name(df, 'sales_date'), msg = 'sales_date column needs to be spelt as follow: sales_date')
 
-  ggplot2::ggplot(df, ggplot2::aes_string(x = 'date_sold', y = sales_var, color = group_var)) +
+  ggplot2::ggplot(df, ggplot2::aes_string(x = 'sales_date', y = sales_var, color = group_var)) +
     ggplot2::geom_point(shape = 16) +
     ggplot2::geom_point(data=(df %>% filter(pid == subject_pid)), color = 'darkgrey', size=5) +
     ggplot2::geom_smooth(method = lm, se = FALSE) +
@@ -200,7 +200,7 @@ price_avgUnitSF_scatter <- function(df, ylimits = c(0,350000)){
 
 #' Average and Median Sales Price by Month
 #'
-#' @param df Data frame with date_sold and sales_price variables
+#' @param df Data frame with sales_date and sales_price variables
 #'
 #' @return returns plot of Average and Median Sales Price by Month
 #' @export
@@ -208,15 +208,15 @@ price_avgUnitSF_scatter <- function(df, ylimits = c(0,350000)){
 #' @examples sales_by_month(Apartments2)
 sales_by_month <- function(df){
   assertthat::assert_that(assertthat::has_name(df, 'sales_price'), msg = 'sales_price column needs to be spelt as follow: sales_price')
-  assertthat::assert_that(assertthat::has_name(df, 'date_sold'), msg = 'date_sold column needs to be spelt as follow: date_sold')
+  assertthat::assert_that(assertthat::has_name(df, 'sales_date'), msg = 'sales_date column needs to be spelt as follow: sales_date')
 
-  # remove NAs from date_sold and sales_price if not already
+  # remove NAs from sales_date and sales_price if not already
   # find month and year columns
   # find average and median sales prices
   df <- df %>%
-    dplyr::filter(!is.na(date_sold) | !is.na(sales_price)) %>%
-    dplyr::mutate(year = lubridate::year(date_sold),
-                  month = lubridate::month(date_sold)) %>%
+    dplyr::filter(!is.na(sales_date) | !is.na(sales_price)) %>%
+    dplyr::mutate(year = lubridate::year(sales_date),
+                  month = lubridate::month(sales_date)) %>%
     dplyr::group_by(year,
                     month) %>%
     dplyr::summarise(avg_sales_price = mean(sales_price),
