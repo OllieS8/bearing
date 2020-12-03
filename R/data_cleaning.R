@@ -12,15 +12,15 @@
 standardise_colnames <- function(df, data_src, data_mapping) {
   if (data_src == 'costar_fields_property') {
     costar_prop_names <- data_mapping$costar_fields_property %>%
-      na.omit()
+      stats::na.omit()
 
     costar_props <- df %>%
-      select(tidyselect::all_of(costar_prop_names))
+      dplyr::select(tidyselect::all_of(costar_prop_names))
 
     assertable::assert_colnames(costar_props, costar_prop_names)
 
     mapping <-
-      data_mapping %>% select(common_snake, costar_fields_property) %>% na.omit()
+      data_mapping %>% dplyr::select(common_snake, costar_fields_property) %>% stats::na.omit()
     colnames(costar_props) <- mapping$common_snake
     print('Costar properties column names cleaned')
 
@@ -29,15 +29,15 @@ standardise_colnames <- function(df, data_src, data_mapping) {
 
   if (data_src == 'costar_sales_2020') {
     costar_sales_names <- data_mapping$costar_sales_2020 %>%
-      na.omit()
+      stats::na.omit()
 
     costar_sales <- df %>%
-      select(tidyselect::all_of(costar_sales_names))
+      dplyr::select(tidyselect::all_of(costar_sales_names))
 
     assertable::assert_colnames(costar_sales, costar_sales_names)
 
     mapping <-
-      data_mapping %>% select(common_snake, costar_sales_2020) %>% na.omit()
+      data_mapping %>% dplyr::select(common_snake, costar_sales_2020) %>% stats::na.omit()
     colnames(costar_sales) <- mapping$common_snake
     print('Costar sales column names cleaned')
 
@@ -47,16 +47,16 @@ standardise_colnames <- function(df, data_src, data_mapping) {
 
   if (data_src == 'epc') {
     epc_names <- data_mapping$epc_names %>%
-      na.omit()
+      stats::na.omit()
 
     epc_data <- df %>%
-      select(tidyselect::all_of(epc_names))
+      dplyr::select(tidyselect::all_of(epc_names))
 
     # testing whether required colnames are present
     assertable::assert_colnames(epc_data, epc_names)
 
     mapping <-
-      data_mapping %>% select(common_snake, epc_names) %>% na.omit()
+      data_mapping %>% dplyr::select(common_snake, epc_names) %>% stats::na.omit()
     colnames(epc_data) <- mapping$common_snake
     print('EPC data column names cleaned')
 
@@ -66,15 +66,15 @@ standardise_colnames <- function(df, data_src, data_mapping) {
 
   if (data_src == 'apts') {
     apt_names <- data_mapping$apts %>%
-      na.omit()
+      stats::na.omit()
 
     apts <- df %>%
-      select(tidyselect::all_of(apt_names))
+      dplyr::select(tidyselect::all_of(apt_names))
 
     assertable::assert_colnames(apts, apt_names)
 
     mapping <-
-      data_mapping %>% select(common_snake, apts) %>% na.omit()
+      data_mapping %>% dplyr::select(common_snake, apts) %>% stats::na.omit()
     colnames(apts) <- mapping$common_snake
     print('Apartments data columns cleaned')
 
@@ -83,15 +83,15 @@ standardise_colnames <- function(df, data_src, data_mapping) {
 
   if (data_src == 'valcre') {
     valcre_names <- data_mapping$valcre %>%
-      na.omit()
+      stats::na.omit()
 
     valcre <- df %>%
-      select(tidyselect::all_of(valcre_names))
+      dplyr::select(tidyselect::all_of(valcre_names))
 
     assertable::assert_colnames(valcre, valcre_names)
 
     mapping <-
-      data_mapping %>% select(common_snake, valcre) %>% na.omit()
+      data_mapping %>% dplyr::select(common_snake, valcre) %>% stats::na.omit()
     colnames(valcre) <- mapping$common_snake
     print('Valcre column names cleaned')
 
