@@ -7,12 +7,12 @@
 #'
 #' @examples
 no_br <- function(df){
-  assertthat::assert_that(assertthat::has_name(df, 'x1br'), msg = '1BR column needs to be spelt as follow: x1br')
-  assertthat::assert_that(assertthat::has_name(df, 'x2br'), msg = '2BR column needs to be spelt as follow: x2br')
-  assertthat::assert_that(assertthat::has_name(df, 'x3br'), msg = '3BR column needs to be spelt as follow: x3br')
+  assertthat::assert_that(assertthat::has_name(df, 'no_1br'), msg = '1BR column needs to be spelt as follow: no_1br')
+  assertthat::assert_that(assertthat::has_name(df, 'no_2br'), msg = '2BR column needs to be spelt as follow: no_2br')
+  assertthat::assert_that(assertthat::has_name(df, 'no_3br'), msg = '3BR column needs to be spelt as follow: no_3br')
 
   df %>%
-    dplyr::mutate(no_br = (x1br + (2*x2br) + (3*x3br)))
+    dplyr::mutate(no_br = (no_1br + (2*no_2br) + (3*no_3br)))
 }
 
 
