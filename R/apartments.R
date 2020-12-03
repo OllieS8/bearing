@@ -25,15 +25,15 @@ no_br <- function(df){
 #'
 #' @examples
 price_per <- function(df){
-  assertthat::assert_that(assertthat::has_name(df, 'price_sold'), msg = 'PriceSold column needs to be spelt as follow: price_sold')
+  assertthat::assert_that(assertthat::has_name(df, 'sales_price'), msg = 'PriceSold column needs to be spelt as follow: sales_price')
   assertthat::assert_that(assertthat::has_name(df, 'sq_ft'), msg = 'SqFt column needs to be spelt as follow: sq_ft')
   assertthat::assert_that(assertthat::has_name(df, 'no_units'), msg = 'NoUnits column needs to be spelt as follow: no_units')
   assertthat::assert_that(assertthat::has_name(df, 'no_br'), msg = 'NoBR column needs to be spelt as follow: no_br')
 
   df %>%
-    dplyr::mutate(ppsf = price_sold / sq_ft  ) %>%
-    dplyr::mutate(ppunit = price_sold / no_units) %>%
-    dplyr::mutate(ppbr = price_sold / no_br)
+    dplyr::mutate(ppsf = sales_price / sq_ft  ) %>%
+    dplyr::mutate(ppunit = sales_price / no_units) %>%
+    dplyr::mutate(ppbr = sales_price / no_br)
 }
 
 

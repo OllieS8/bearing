@@ -4,12 +4,16 @@
 \alias{sales_time_scatter}
 \title{Title}
 \usage{
-sales_time_scatter(df, sales_var = "price_sold", group_var = "subject_cluster")
+sales_time_scatter(
+  df,
+  sales_var = "sales_price",
+  group_var = "subject_cluster"
+)
 }
 \arguments{
 \item{df}{data frame}
 
-\item{sales_var}{sales variable to use for plot. Default = price_sold}
+\item{sales_var}{sales variable to use for plot. Default = sales_price}
 
 \item{group_var}{variable to group on. Default = subject_m}
 }
@@ -21,5 +25,5 @@ including a fitted line of best fit.
 Title
 }
 \examples{
-sales_time_scatter(sales_with_knn, sales_var = 'price_sold')
+sales_time_scatter(sales_with_knn, sales_var = 'sales_price')
 }
