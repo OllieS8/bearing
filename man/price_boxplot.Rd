@@ -6,14 +6,14 @@
 \usage{
 price_boxplot(
   df,
-  variable = c("all", "price_sold", "ppsf", "ppbr", "ppunit"),
+  variable = c("all", "sales_price", "ppsf", "ppbr", "ppunit"),
   columns = 1
 )
 }
 \arguments{
 \item{df}{Data frame}
 
-\item{variable}{variable of interest: price_sold, ppsf, ppbr or ppunit. default = all.}
+\item{variable}{variable of interest: sales_price, ppsf, ppbr or ppunit. default = all.}
 
 \item{ylimits}{limits of y axis}
 }

@@ -35,27 +35,27 @@ leaflet_plot <- function(df, subject_lng = NULL, subject_lat = NULL){
                      weight = 5, opacity = 1, fill = TRUE, fillColor = "red",
                      fillOpacity = 1, dashArray = NULL,  popupOptions = NULL, label = NULL, labelOptions = NULL, options = leaflet::pathOptions(), clusterOptions = NULL, clusterId = NULL) %>%
     leaflet::addMarkers(lng = ~longitude, lat = ~latitude, popup = paste("Address", df$address, "<br>",
-                                                                        "Sale Price: $", df$price_sold, "<br>"))
+                                                                        "Sale Price: $", df$sales_price, "<br>"))
 }
 
 #' Create a histogram of different sales metrics
 #'
 #' @param df Data frame
 #' @param columns number of columns for plots - default = 1
-#' @param variable variable of interest: price_sold, ppsf, ppbr or ppunit.
+#' @param variable variable of interest: sales_price, ppsf, ppbr or ppunit.
 #'
 #' @return returns a histogram
 #' @export
 #'
 #' @examples Modified from g2- Case Study.Rmd:
-#' sales_price_histogram(Apartments3, variable = 'price_sold', bin_width = 100000, xlimits = c(0,7500000))
-sales_price_histogram <- function(df, variable = c("all", "price_sold","ppsf","ppbr","ppunit"), columns = 1){
+#' sales_price_histogram(Apartments3, variable = 'sales_price', bin_width = 100000, xlimits = c(0,7500000))
+sales_price_histogram <- function(df, variable = c("all", "sales_price","ppsf","ppbr","ppunit"), columns = 1){
 
   p <- list()
 
-  if('price_sold' %in% variable | 'all' %in% variable){
-    assertthat::assert_that(assertthat::has_name(df, 'price_sold'), msg = 'price_sold column needs to be spelt as follow: price_sold')
-    specific_variable <- 'price_sold'
+  if('sales_price' %in% variable | 'all' %in% variable){
+    assertthat::assert_that(assertthat::has_name(df, 'sales_price'), msg = 'sales_price column needs to be spelt as follow: sales_price')
+    specific_variable <- 'sales_price'
     title_lab <- "Histogram of Sold Price"
     x_lab <- "Reported Sold Price"
     p1 <- bearing::hist_plot(df, title_lab, x_lab, specific_variable)
@@ -98,7 +98,7 @@ sales_price_histogram <- function(df, variable = c("all", "price_sold","ppsf","p
 #' Create a boxplot of different sales metrics
 #'
 #' @param df Data frame
-#' @param variable variable of interest: price_sold, ppsf, ppbr or ppunit. default = all.
+#' @param variable variable of interest: sales_price, ppsf, ppbr or ppunit. default = all.
 #' @param ylimits limits of y axis
 #'
 #' @return returns a boxplot
@@ -106,13 +106,13 @@ sales_price_histogram <- function(df, variable = c("all", "price_sold","ppsf","p
 #'
 #' @examples Modified from g2- Case Study.Rmd:
 #' price_boxplot(Apartments3, variable = 'ppsf')
-price_boxplot <- function(df, variable = c('all','price_sold','ppsf','ppbr','ppunit'), columns = 1){
+price_boxplot <- function(df, variable = c('all','sales_price','ppsf','ppbr','ppunit'), columns = 1){
 
   p <- list()
 
-  if('price_sold' %in% variable | 'all' %in% variable){
-    assertthat::assert_that(assertthat::has_name(df, 'price_sold'), msg = 'price_sold column needs to be spelt as follow: price_sold')
-    specific_variable <- 'price_sold'
+  if('sales_price' %in% variable | 'all' %in% variable){
+    assertthat::assert_that(assertthat::has_name(df, 'sales_price'), msg = 'sales_price column needs to be spelt as follow: sales_price')
+    specific_variable <- 'sales_price'
     title_lab <- "Boxplot of Sold Price"
     y_lab <- "Reported Sold Price"
     p1 <- bearing::box_plot(df, title_lab, y_lab, specific_variable)
@@ -154,7 +154,7 @@ price_boxplot <- function(df, variable = c('all','price_sold','ppsf','ppbr','ppu
 
 #' Title
 #'
-#' @param sales_var sales variable to use for plot. Default = price_sold
+#' @param sales_var sales variable to use for plot. Default = sales_price
 #' @param group_var variable to group on. Default = subject_m
 #' @param df data frame
 #'
@@ -162,8 +162,8 @@ price_boxplot <- function(df, variable = c('all','price_sold','ppsf','ppbr','ppu
 #' including a fitted line of best fit.
 #' @export
 #'
-#' @examples sales_time_scatter(sales_with_knn, sales_var = 'price_sold')
-sales_time_scatter <- function(df, sales_var = 'price_sold', group_var = 'subject_cluster'){
+#' @examples sales_time_scatter(sales_with_knn, sales_var = 'sales_price')
+sales_time_scatter <- function(df, sales_var = 'sales_price', group_var = 'subject_cluster'){
   assertthat::assert_that(assertthat::has_name(df, 'date_sold'), msg = 'date_sold column needs to be spelt as follow: date_sold')
 
   ggplot2::ggplot(df, ggplot2::aes_string(x = 'date_sold', y = sales_var, color = group_var)) +
@@ -200,33 +200,33 @@ price_avgUnitSF_scatter <- function(df, ylimits = c(0,350000)){
 
 #' Average and Median Sales Price by Month
 #'
-#' @param df Data frame with date_sold and price_sold variables
+#' @param df Data frame with date_sold and sales_price variables
 #'
 #' @return returns plot of Average and Median Sales Price by Month
 #' @export
 #'
 #' @examples sales_by_month(Apartments2)
 sales_by_month <- function(df){
-  assertthat::assert_that(assertthat::has_name(df, 'price_sold'), msg = 'price_sold column needs to be spelt as follow: price_sold')
+  assertthat::assert_that(assertthat::has_name(df, 'sales_price'), msg = 'sales_price column needs to be spelt as follow: sales_price')
   assertthat::assert_that(assertthat::has_name(df, 'date_sold'), msg = 'date_sold column needs to be spelt as follow: date_sold')
 
-  # remove NAs from date_sold and price_sold if not already
+  # remove NAs from date_sold and sales_price if not already
   # find month and year columns
   # find average and median sales prices
   df <- df %>%
-    dplyr::filter(!is.na(date_sold) | !is.na(price_sold)) %>%
+    dplyr::filter(!is.na(date_sold) | !is.na(sales_price)) %>%
     dplyr::mutate(year = lubridate::year(date_sold),
                   month = lubridate::month(date_sold)) %>%
     dplyr::group_by(year,
                     month) %>%
-    dplyr::summarise(avg_price_sold = mean(price_sold),
-                     median_price_sold = median(price_sold)) %>%
+    dplyr::summarise(avg_sales_price = mean(sales_price),
+                     median_sales_price = median(sales_price)) %>%
     tidyr::pivot_longer(!c(year,month),
                         names_to = 'metric',
-                        values_to = 'price_sold') %>%
+                        values_to = 'sales_price') %>%
     dplyr::mutate(month_year = zoo::as.yearmon(paste(year, month), "%Y %m"))
 
-  ggplot2::ggplot(df, aes(x = month_year, y = price_sold, color = metric, group = metric)) +
+  ggplot2::ggplot(df, aes(x = month_year, y = sales_price, color = metric, group = metric)) +
     ggplot2::geom_point() +
     ggplot2::geom_line() +
     ggplot2::geom_smooth(method = lm, se = FALSE) +
