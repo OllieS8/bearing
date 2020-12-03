@@ -27,12 +27,12 @@ no_br <- function(df){
 price_per <- function(df){
   assertthat::assert_that(assertthat::has_name(df, 'sales_price'), msg = 'PriceSold column needs to be spelt as follow: sales_price')
   assertthat::assert_that(assertthat::has_name(df, 'gba'), msg = 'SqFt column needs to be spelt as follow: gba')
-  assertthat::assert_that(assertthat::has_name(df, 'no_units'), msg = 'NoUnits column needs to be spelt as follow: no_units')
+  assertthat::assert_that(assertthat::has_name(df, 'units'), msg = 'NoUnits column needs to be spelt as follow: units')
   assertthat::assert_that(assertthat::has_name(df, 'no_br'), msg = 'NoBR column needs to be spelt as follow: no_br')
 
   df %>%
     dplyr::mutate(ppsf = sales_price / gba  ) %>%
-    dplyr::mutate(ppunit = sales_price / no_units) %>%
+    dplyr::mutate(ppunit = sales_price / units) %>%
     dplyr::mutate(ppbr = sales_price / no_br)
 }
 
@@ -73,10 +73,10 @@ adj_ppunit <- function(df, from_date, value_date){
 #' @examples
 avg_unitsf <- function(df){
   assertthat::assert_that(assertthat::has_name(df, 'gba'), msg = 'SqFt column needs to be spelt as follow: gba')
-  assertthat::assert_that(assertthat::has_name(df, 'no_units'), msg = 'NoUnits column needs to be spelt as follow: no_units')
+  assertthat::assert_that(assertthat::has_name(df, 'units'), msg = 'NoUnits column needs to be spelt as follow: units')
 
   df %>%
-    dplyr::mutate(avg_unit_sf = gba / no_units)
+    dplyr::mutate(avg_unit_sf = gba / units)
 }
 
 
