@@ -285,7 +285,8 @@ plot_knn <- function(df){
 facet_hist <- function(df, variable){
   ggplot2::ggplot(df, ggplot2::aes_string(x = variable)) +
     ggplot2::geom_histogram() +
-    ggplot2::facet_grid(m ~ .)
+    ggplot2::facet_grid(m ~ .,
+                        labeller = label_both)
 }
 
 #' Facet boxplot
@@ -302,5 +303,6 @@ facet_boxplot <- function(df, variable){
     ggplot2::geom_boxplot(mapping = ggplot2::aes_string(y=variable)) +
     ggplot2::guides(fill=FALSE) +
     ggplot2::coord_flip() +
-    ggplot2::facet_grid(m ~ .)
+    ggplot2::facet_grid(m ~ .,
+                        labeller = label_both)
 }
