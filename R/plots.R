@@ -168,9 +168,17 @@ sales_time_scatter <- function(df, sales_var = 'sales_price', group_var = 'subje
 
   ggplot2::ggplot(df, ggplot2::aes_string(x = 'sales_date', y = sales_var, color = group_var)) +
     ggplot2::geom_point(shape = 16) +
-    ggplot2::geom_point(data=(df %>% filter(pid == subject_pid)), color = 'darkgrey', size=5) +
+    ggplot2::geom_point(aes(alpha=''),
+                        data=(df %>%
+                                filter(pid == subject_pid)),
+                        color = 'red',
+                        shape = 24) +
     ggplot2::geom_smooth(method = lm, se = FALSE) +
-    ggplot2::labs(title = "Market Conditions", x = "Reported Sale Date", y = sales_var)
+    scale_alpha_manual(values = 1) +
+    ggplot2::labs(title = "Market Conditions",
+                  x = "Reported Sale Date",
+                  y = sales_var,
+                  alpha = 'Subject Property')
 }
 
 
